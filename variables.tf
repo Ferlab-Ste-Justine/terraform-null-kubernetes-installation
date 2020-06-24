@@ -29,6 +29,11 @@ variable "kubespray_path" {
   type = string
 }
 
+variable "kubespray_artifacts_path" {
+  description = "Directory where to put kubespray artifacts"
+  type = string
+}
+
 variable "cloud_init_sync_path" {
   description = "Directory to put cloud-init synchronization ansible files in"
   type = string

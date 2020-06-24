@@ -48,6 +48,7 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
     inline = [
         "git clone https://github.com/kubernetes-sigs/kubespray.git ${var.kubespray_path}",
+        "mkdir -p ${var.kubespray_artifacts_path}",
         "cd ${var.kubespray_path} && git checkout v2.13.2",
         "cd ${var.kubespray_path} && sudo pip3 install -r requirements.txt",
         "cd ${var.kubespray_path} && cp -rfp inventory/sample inventory/deployment",
@@ -89,6 +90,7 @@ resource "null_resource" "kubernetes_installation" {
     content     = templatefile(
       "${path.module}/kubespray/configurations/k8s-cluster/k8s-cluster.yml", 
       {
+        artifacts_dir = var.kubespray_artifacts_path
         load_balancer_external_ip = var.load_balancer_external_ip
       }
     )
