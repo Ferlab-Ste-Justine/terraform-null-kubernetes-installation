@@ -1,0 +1,4 @@
+[dependencies]
+%{ for ip in dependent_ips ~}
+${ip}
+%{ endfor ~}
