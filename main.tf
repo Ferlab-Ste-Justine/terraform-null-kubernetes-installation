@@ -36,10 +36,15 @@ resource "null_resource" "kubernetes_installation" {
     source      = "${path.module}/sync-with-cloud-init/sync.yml"
     destination = "${var.cloud_init_sync_path}/sync.yml"
   }
+
+  provisioner "file" {
+    source      = "${path.module}/sync-with-cloud-init/ansible.cfg"
+    destination = "${var.cloud_init_sync_path}/ansible.cfg"
+  }
   
   provisioner "remote-exec" {
     inline = [
-      "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key=/home/ubuntu/.ssh/id_rsa --user ubuntu --inventory ${var.cloud_init_sync_path}/inventory --become --become-user=root ${var.cloud_init_sync_path}/sync.yml",
+      "ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_CONFIG=${var.cloud_init_sync_path}/ansible.cfg ansible-playbook --private-key=/home/ubuntu/.ssh/id_rsa --user ubuntu --inventory ${var.cloud_init_sync_path}/inventory --become --become-user=root ${var.cloud_init_sync_path}/sync.yml",
       "sudo rm -r ${var.cloud_init_sync_path}"
     ]
   }
