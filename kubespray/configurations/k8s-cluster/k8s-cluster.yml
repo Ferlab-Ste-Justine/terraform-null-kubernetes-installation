@@ -233,7 +233,7 @@ podsecuritypolicy_enabled: false
 kubeconfig_localhost: true
 artifacts_dir: ${artifacts_dir}
 # Download kubectl onto the host that runs Ansible in {{ bin_dir }}
-# kubectl_localhost: false
+kubectl_localhost: true
 
 # A comma separated list of levels of node allocatable enforcement to be enforced by kubelet.
 # Acceptable options are 'pods', 'system-reserved', 'kube-reserved' and ''. Default is "".
