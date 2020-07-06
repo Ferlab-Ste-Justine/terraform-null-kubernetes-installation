@@ -19,18 +19,36 @@ variable "bastion_external_ip" {
   type = string
 }
 
+variable "bastion_port" {
+  description = "Ssh port the bastion uses"
+  type = number
+  default = 22
+}
+
+variable "bastion_user" {
+  description = "User to ssh on the bastion as"
+  type = string
+  default = "ubuntu"
+}
+
+variable "k8_cluster_user" {
+  description = "User to ssh on k8 machines as"
+  type = string
+  default = "ubuntu"
+}
+
 variable "bastion_key_pair" {
   description = "SSh key pair"
   type = any
 }
 
-variable "kubespray_path" {
-  description = "Directory to put kubespray ansible files in"
+variable "provisioning_path" {
+  description = "Directory to put kubernetes provisioning files in. This directory will be deleted after the installation."
   type = string
 }
 
-variable "kubespray_artifacts_path" {
-  description = "Directory where to put kubespray artifacts"
+variable "artifacts_path" {
+  description = "Directory where to put post-installation admin.conf file and kubectl binary"
   type = string
 }
 
