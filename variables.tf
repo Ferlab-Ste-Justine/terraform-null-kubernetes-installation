@@ -19,6 +19,12 @@ variable "bastion_external_ip" {
   type = string
 }
 
+variable "bastion_port" {
+  description = "Ssh port the bastion uses"
+  type = number
+  default = 22
+}
+
 variable "bastion_key_pair" {
   description = "SSh key pair"
   type = any

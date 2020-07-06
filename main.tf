@@ -10,6 +10,7 @@ resource "null_resource" "kubernetes_installation" {
     host        = var.bastion_external_ip
     type        = "ssh"
     user        = "ubuntu"
+    port        = var.bastion_port
     private_key = var.bastion_key_pair.private_key
   }
 
