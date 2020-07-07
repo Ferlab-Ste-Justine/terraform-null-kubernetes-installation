@@ -66,3 +66,9 @@ variable "wait_on_ips" {
     description = "Ips of extra vms (beyond the workers, masters and bastion) that the provisioner wait on for cloud-init. If your api load balancer is a vm, you should put it there."
     type = any
 }
+
+variable "revision" {
+  description = "Internal version of the module to force reprovisioning on changes. Should usually be left to default value to reprovision with incremental versions."
+  type = string
+  default = "1.0.0"
+}
