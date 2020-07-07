@@ -4,6 +4,7 @@ resource "null_resource" "kubernetes_installation" {
     master_ips = join(",", var.master_ips)
     worker_ips = join(",", var.worker_ips)
     load_balancer_external_ip = var.load_balancer_external_ip
+    version = var.version
   }
 
   connection {
@@ -127,10 +128,10 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
       inline = [
           "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.provisioning_path}/inventory/deployment/inventory --become --become-user=root ${var.provisioning_path}/cluster.yml",
-          "sudo rm -r ${var.provisioning_path}"
+          "sudo rm -r ${var.provisioning_path}",
           #Unless we force kubespray to use our external api load balancer internally, it will make the kubectl configuration point to the internal ip of the first master
           #To save ourselves an edit downstream, we automatically change it to the external load balancer ip so that the configuration file is both robust and usable anywhere
-          "sed -i -E \"s/server: https:\/\/[0-9]+.[0-9]+.[0-9]+.[0-9]+:6443/server: https:\/\/${var.load_balancer_external_ip}/\" ${var.artifacts_path}/admin.conf"
+          "sed -i -E \"s/server: https:\\/\\/[0-9]+.[0-9]+.[0-9]+.[0-9]+:6443/server: https:\\/\\/${var.load_balancer_external_ip}/\" ${var.artifacts_path}/admin.conf"
       ]
   }
 }
