@@ -67,7 +67,7 @@ variable "wait_on_ips" {
     type = any
 }
 
-variable "version" {
+variable "revision" {
   description = "Internal version of the module to force reprovisioning on changes. Should usually be left to default value to reprovision with incremental versions."
   type = string
   default = "1.0.0"

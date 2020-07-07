@@ -4,7 +4,7 @@ resource "null_resource" "kubernetes_installation" {
     master_ips = join(",", var.master_ips)
     worker_ips = join(",", var.worker_ips)
     load_balancer_external_ip = var.load_balancer_external_ip
-    version = var.version
+    version = var.revision
   }
 
   connection {
