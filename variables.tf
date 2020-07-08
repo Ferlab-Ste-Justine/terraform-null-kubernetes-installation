@@ -72,3 +72,15 @@ variable "revision" {
   type = string
   default = "1.1.0"
 }
+
+variable "k8_ingress_http_port" {
+  description "Port that will be taken up on all kubernetes workers for ingress http traffic"
+  type = number
+  default = 30000
+}
+
+variable "k8_ingress_https_port" {
+  description "Port that will be taken up on all kubernetes workers for ingress https traffic"
+  type = number
+  default = 30001
+}

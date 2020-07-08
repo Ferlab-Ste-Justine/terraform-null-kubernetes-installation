@@ -89,8 +89,14 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/kubespray/configurations/k8s-cluster/addons.yml"
-    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/addons.yml"
+    content      = templatefile(
+      "${path.module}/kubespray/configurations/k8s-cluster/addons.yml",
+      {
+        ingress_http_port = var.k8_ingress_http_port
+        ingress_https_port = var.k8_ingress_https_port
+      }
+    )
+    destination  = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/addons.yml"
   }
 
   provisioner "file" {
