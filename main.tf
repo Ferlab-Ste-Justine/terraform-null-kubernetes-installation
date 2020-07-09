@@ -59,7 +59,15 @@ resource "null_resource" "kubernetes_installation" {
         "cd ${var.provisioning_path} && git checkout v2.13.2",
         "cd ${var.provisioning_path} && sudo pip3 install -r requirements.txt",
         "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment",
+        #Also, add custom addons directory for addons not managed by kubespray
+        "mkdir -p ${var.provisioning_path}/custom_addons/cert-manager"
     ]
+  }
+
+  #Copy custom addon files
+  provisioner "file" {
+    source      = "${path.module}/addons/cert-manager/cert-manager.yaml"
+    destination = "${var.provisioning_path}/custom_addons/cert-manager/cert-manager.yaml"
   }
 
   #Copy our custom configuration, inventory and run kubespray
@@ -134,10 +142,13 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
       inline = [
           "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.provisioning_path}/inventory/deployment/inventory --become --become-user=root ${var.provisioning_path}/cluster.yml",
-          "sudo rm -r ${var.provisioning_path}",
           #Unless we force kubespray to use our external api load balancer internally, it will make the kubectl configuration point to the internal ip of the first master
           #To save ourselves an edit downstream, we automatically change it to the external load balancer ip so that the configuration file is both robust and usable anywhere
-          "sed -i -E \"s/server: https:\\/\\/[0-9]+.[0-9]+.[0-9]+.[0-9]+:6443/server: https:\\/\\/${var.load_balancer_external_ip}:6443/\" ${var.artifacts_path}/admin.conf"
+          "sed -i -E \"s/server: https:\\/\\/[0-9]+.[0-9]+.[0-9]+.[0-9]+:6443/server: https:\\/\\/${var.load_balancer_external_ip}:6443/\" ${var.artifacts_path}/admin.conf",
+          #Add a recent version of cert-manager
+          "${var.artifacts_path}/kubectl --kubeconfig=${var.artifacts_path}/admin.conf apply -f ${var.provisioning_path}/custom_addons/cert-manager/cert-manager.yaml",
+          #cleanup
+          "sudo rm -r ${var.provisioning_path}"
       ]
   }
 }
