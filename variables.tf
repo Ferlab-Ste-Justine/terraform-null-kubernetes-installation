@@ -70,5 +70,17 @@ variable "wait_on_ips" {
 variable "revision" {
   description = "Internal version of the module to force reprovisioning on changes. Should usually be left to default value to reprovision with incremental versions."
   type = string
-  default = "1.0.0"
+  default = "1.1.0"
+}
+
+variable "k8_ingress_http_port" {
+  description = "Port that will be taken up on all kubernetes workers for ingress http traffic"
+  type = number
+  default = 30000
+}
+
+variable "k8_ingress_https_port" {
+  description = "Port that will be taken up on all kubernetes workers for ingress https traffic"
+  type = number
+  default = 30001
 }

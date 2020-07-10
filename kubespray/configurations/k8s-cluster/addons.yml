@@ -81,8 +81,8 @@ rbd_provisioner_enabled: false
 # rbd_provisioner_reclaim_policy: Delete
 
 # Nginx ingress controller deployment
-ingress_nginx_enabled: false
-# ingress_nginx_host_network: false
+ingress_nginx_enabled: true
+ingress_nginx_host_network: false
 ingress_publish_status_address: ""
 # ingress_nginx_nodeselector:
 #   kubernetes.io/os: "linux"
@@ -91,10 +91,11 @@ ingress_publish_status_address: ""
 #     operator: "Equal"
 #     value: ""
 #     effect: "NoSchedule"
-# ingress_nginx_namespace: "ingress-nginx"
-# ingress_nginx_insecure_port: 80
-# ingress_nginx_secure_port: 443
-# ingress_nginx_configmap:
+ingress_nginx_namespace: "ingress-nginx"
+ingress_nginx_insecure_port: ${ingress_http_port}
+ingress_nginx_secure_port: ${ingress_https_port}
+ingress_nginx_configmap:
+  ssl-redirect: "false"
 #   map-hash-bucket-size: "128"
 #   ssl-protocols: "SSLv2"
 # ingress_nginx_configmap_tcp_services:
@@ -114,4 +115,4 @@ ingress_alb_enabled: false
 
 # Cert manager deployment
 cert_manager_enabled: false
-# cert_manager_namespace: "cert-manager"
+cert_manager_namespace: "cert-manager"
