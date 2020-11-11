@@ -1,0 +1,15 @@
+name: Run Terraform Validate
+
+on: [push]
+
+jobs:
+  Deploy:
+    name: Apply the terraform infra
+    runs-on: ubuntu-18.04
+    container: hashicorp/terraform:0.12.29
+    steps:
+    - uses: actions/checkout@v2
+    - name: Initialize the terraform modules
+      run: terraform init
+    - name: Validate the terraform files
+      run: terraform validate

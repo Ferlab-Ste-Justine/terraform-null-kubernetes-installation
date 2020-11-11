@@ -84,3 +84,9 @@ variable "k8_ingress_https_port" {
   type = number
   default = 30001
 }
+
+variable "k8_cluster_name" {
+  description = "Name of the k8 cluster in the configuration"
+  type = string
+  default = "cluster.local"
+}

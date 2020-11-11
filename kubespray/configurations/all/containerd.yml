@@ -1,5 +1,4 @@
 ---
-# Based on: https://github.com/kubernetes-sigs/kubespray/blob/v2.13.2/inventory/sample/group_vars/all/containerd.yml
 # Please see roles/container-engine/containerd/defaults/main.yml for more configuration options
 
 # containerd_config:
