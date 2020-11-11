@@ -14,7 +14,6 @@
 # add default ippool blockSize (defaults kube_network_node_prefix)
 # calico_pool_blocksize: 24
 
-# Based on: https://github.com/kubernetes-sigs/kubespray/blob/v2.13.2/inventory/sample/group_vars/k8s-cluster/k8s-net-calico.yml
 # add default ippool CIDR (must be inside kube_pods_subnet, defaults to kube_pods_subnet otherwise)
 # calico_pool_cidr: 1.2.3.4/5
 
@@ -25,6 +24,13 @@
 # not be specified in calico CNI config, so Calico will use built-in
 # defaults. The value should be a number, not a string.
 # calico_mtu: 1500
+
+# Configure the MTU to use for workload interfaces and tunnels.
+# - If Wireguard is enabled, set to your network MTU - 60
+# - Otherwise, if VXLAN or BPF mode is enabled, set to your network MTU - 50
+# - Otherwise, if IPIP is enabled, set to your network MTU - 20
+# - Otherwise, if not using any encapsulation, set to your network MTU.
+# calico_veth_mtu: 1440
 
 # Advertise Cluster IPs
 # calico_advertise_cluster_ips: true
@@ -66,3 +72,7 @@
 # calico_ip_auto_method: "interface=eth.*"
 # Choose the iptables insert mode for Calico: "Insert" or "Append".
 # calico_felix_chaininsertmode: Insert
+
+# If you want use the default route interface when you use multiple interface with dynamique route (iproute2)
+# see https://docs.projectcalico.org/reference/node/configuration : FELIX_DEVICEROUTESOURCEADDRESS
+# calico_use_default_route_src_ipaddr: false

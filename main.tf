@@ -1,3 +1,7 @@
+locals {
+  kubespray_tag = "v2.14.2"
+}
+
 resource "null_resource" "kubernetes_installation" {
   #If any machine in the cluster or the api external ip has changed, we need to re-provision
   triggers = {
@@ -56,7 +60,7 @@ resource "null_resource" "kubernetes_installation" {
     inline = [
         "git clone https://github.com/kubernetes-sigs/kubespray.git ${var.provisioning_path}",
         "mkdir -p ${var.artifacts_path}",
-        "cd ${var.provisioning_path} && git checkout v2.13.2",
+        "cd ${var.provisioning_path} && git checkout ${local.kubespray_tag}",
         "cd ${var.provisioning_path} && sudo pip3 install -r requirements.txt",
         "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment",
         #Also, add custom addons directory for addons not managed by kubespray
@@ -111,6 +115,7 @@ resource "null_resource" "kubernetes_installation" {
     content     = templatefile(
       "${path.module}/kubespray/configurations/k8s-cluster/k8s-cluster.yml", 
       {
+        cluster_name = var.k8_cluster_name
         artifacts_dir = var.artifacts_path
         load_balancer_external_ip = var.load_balancer_external_ip
       }
