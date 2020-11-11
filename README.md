@@ -8,6 +8,13 @@ Prior to running the kubernetes installation, the module will wait for cloud-ini
 
 Furthermore, a configuration file for kubectl and a kubectl binary with the appropriate version will be downloaded in the bastion.
 
+# Versions
+
+This module uses of the following versions of underlying components:
+- Kubespray: v2.14.2
+- Kubernetes: v1.19.0
+- Cert-Manager: v1.0.4
+
 # Input Variables
 
 The module takes the following input variables:
@@ -28,6 +35,7 @@ The module takes the following input variables:
 - revision: Internal variable used to trigger a reprovisioning of the installation when the module changes. Can be used externally (ideally only in cases of an emergency) to explicitly force a re-installation (by passing the date and time as a value for example). Such explicit retriggerings should obviously be commited in version control to keep an audit of all impacting actions on shared environments.
 - k8_ingress_http_port: Port on the kubernetes workers that will be used for ingress http traffic
 - k8_ingress_https_port: Port on the kubernetes workers that will be used for ingress https traffic
+- k8_cluster_name: Name of the kubernetes cluster. Mostly relevant if you want to reference multiple kubernetes clusters with the same configuration file. Defaullts to **cluster.local**
 
 # Output Variables
 

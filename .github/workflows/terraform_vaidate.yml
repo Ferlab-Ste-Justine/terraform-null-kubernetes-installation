@@ -4,7 +4,7 @@ on: [push]
 
 jobs:
   Deploy:
-    name: Apply the terraform infra
+    name: Validate the Terraform files
     runs-on: ubuntu-18.04
     container: hashicorp/terraform:0.12.29
     steps:
