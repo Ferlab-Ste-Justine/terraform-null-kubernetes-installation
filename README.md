@@ -12,7 +12,7 @@ Furthermore, a configuration file for kubectl and a kubectl binary with the appr
 
 This module uses of the following versions of underlying components:
 - Kubespray: v2.14.2
-- Kubernetes: v1.19.0
+- Kubernetes: v1.19.4
 - Cert-Manager: v1.0.4
 
 # Input Variables
