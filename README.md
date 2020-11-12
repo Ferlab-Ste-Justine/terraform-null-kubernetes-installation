@@ -12,7 +12,6 @@ Furthermore, a configuration file for kubectl and a kubectl binary with the appr
 
 This module uses of the following versions of underlying components:
 - Kubespray: v2.14.2
-- Kubernetes: v1.19.4
 - Cert-Manager: v1.0.4
 
 # Input Variables
@@ -36,6 +35,7 @@ The module takes the following input variables:
 - k8_ingress_http_port: Port on the kubernetes workers that will be used for ingress http traffic
 - k8_ingress_https_port: Port on the kubernetes workers that will be used for ingress https traffic
 - k8_cluster_name: Name of the kubernetes cluster. Mostly relevant if you want to reference multiple kubernetes clusters with the same configuration file. Defaullts to **cluster.local**
+- k8_version: Version of kubernetes to install. Defaults to v1.19.3.
 
 # Output Variables
 

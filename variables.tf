@@ -90,3 +90,9 @@ variable "k8_cluster_name" {
   type = string
   default = "cluster.local"
 }
+
+variable "k8_version" {
+  description = "Kubernetes version to install"
+  type = string
+  default = "v1.19.3"
+}
