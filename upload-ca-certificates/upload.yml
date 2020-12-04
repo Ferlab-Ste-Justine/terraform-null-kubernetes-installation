@@ -1,0 +1,100 @@
+---
+- name: Copy Certificates
+  hosts: all
+  tasks:
+  - name: Create kube-cert Group
+    group:
+      name: kube-cert
+      system: yes
+  - name: Create kube-cert User
+    user:
+      comment: "Kubernetes user"
+      createhome: no
+      group: kube-cert
+      shell: /sbin/nologin
+      name: kube
+      system: yes
+  - name: Create etcd Group
+    group:
+      name: etcd
+      system: yes
+  - name: Create etcd User
+    user:
+      comment: "Etcd user"
+      createhome: no
+      group: etcd
+      shell: /sbin/nologin
+      name: etcd
+      system: yes
+  #Create Directories, DON'T FORGET
+  #https://stackoverflow.com/questions/42186301/ansible-create-multiple-folders-if-dont-exist/42188275
+  - name: Create kubernetes ssl directory
+    file:
+      path: /etc/kubernetes/ssl
+      state: directory
+      owner: kube
+      group: root
+      mode: 0755
+  - name: Create ssl directory
+    file:
+      path: /etc/ssl
+      state: directory
+      owner: root
+      group: root
+      mode: 0755
+  - name: Create ssl etcd directory
+    file:
+      path: /etc/ssl/etcd
+      state: directory
+      owner: kube
+      group: root
+      mode: 0700
+  - name: Create ssl etcd ssl directory
+    file:
+      path: /etc/ssl/etcd/ssl
+      state: directory
+      owner: kube
+      group: root
+      mode: 0640
+  - name: Copy ca certificate
+    copy:
+      src: certs/ca.crt
+      dest: /etc/kubernetes/ssl/ca.crt
+      owner: root
+      group: root
+      mode: 0644
+  - name: Copy ca key
+    copy:
+      src: certs/ca.key
+      dest: /etc/kubernetes/ssl/ca.key
+      owner: root
+      group: root
+      mode: 0600
+  - name: Copy front proxy ca certificate
+    copy:
+      src: certs/front-proxy.crt
+      dest: /etc/kubernetes/ssl/front-proxy-ca.crt
+      owner: root
+      group: root
+      mode: 0644
+  - name: Copy front proxy ca key
+    copy:
+      src: certs/front-proxy.key
+      dest: /etc/kubernetes/ssl/front-proxy-ca.key
+      owner: root
+      group: root
+      mode: 0600
+  - name: Copy etcd ca certificate
+    copy:
+      src: certs/etcd.crt
+      dest:  /etc/ssl/etcd/ssl/ca.pem
+      owner: kube
+      group: root
+      mode: 0640
+  - name: Copy etcd ca key
+    copy:
+      src: certs/etcd.key
+      dest:  /etc/ssl/etcd/ssl/ca-key.pem
+      owner: kube
+      group: root
+      mode: 0640
