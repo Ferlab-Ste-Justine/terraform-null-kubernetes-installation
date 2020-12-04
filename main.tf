@@ -83,32 +83,32 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
-    content     = var.ca_certificate
+    content     = var.ca_certificate != "" ? var.ca_certificate : "N/A"
     destination = "${var.certificates_path}/certs/ca.crt"
   }
 
   provisioner "file" {
-    content     = var.ca_private_key
+    content     = var.ca_private_key != "" ? var.ca_private_key : "N/A"
     destination = "${var.certificates_path}/certs/ca.key"
   }
 
   provisioner "file" {
-    content     = var.etcd_ca_certificate
+    content     = var.etcd_ca_certificate != "" ? var.etcd_ca_certificate : "N/A"
     destination = "${var.certificates_path}/certs/etcd.crt"
   }
 
   provisioner "file" {
-    content     = var.etcd_ca_private_key
+    content     = var.etcd_ca_private_key != "" ? var.etcd_ca_private_key : "N/A"
     destination = "${var.certificates_path}/certs/etcd.key"
   }
 
   provisioner "file" {
-    content     = var.front_proxy_ca_certificate
+    content     = var.front_proxy_ca_certificate != "" ? var.front_proxy_ca_certificate : "N/A"
     destination = "${var.certificates_path}/certs/front-proxy.crt"
   }
 
   provisioner "file" {
-    content     = var.front_proxy_ca_private_key
+    content     = var.front_proxy_ca_private_key != "" ? var.front_proxy_ca_private_key : "N/A"
     destination = "${var.certificates_path}/certs/front-proxy.key"
   }
 
