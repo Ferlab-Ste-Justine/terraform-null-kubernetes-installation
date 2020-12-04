@@ -55,6 +55,70 @@ resource "null_resource" "kubernetes_installation" {
     ]
   }
 
+  #Upload the ca certificates and keys on the masters
+  provisioner "remote-exec" {
+    inline = [
+      "mkdir -p ${var.certificates_path}/certs"
+    ]
+  }
+
+  provisioner "file" {
+    content     = templatefile(
+      "${path.module}/upload-ca-certificates/inventory", 
+      {
+        master_ips = var.master_ips
+      }
+    )
+    destination = "${var.certificates_path}/inventory"
+  }  
+  
+  provisioner "file" {
+    source      = "${path.module}/upload-ca-certificates/upload.yml"
+    destination = "${var.certificates_path}/upload.yml"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/upload-ca-certificates/ansible.cfg"
+    destination = "${var.certificates_path}/ansible.cfg"
+  }
+
+  provisioner "file" {
+    content     = var.ca_certificate
+    destination = "${var.certificates_path}/certs/ca.crt"
+  }
+
+  provisioner "file" {
+    content     = var.ca_key
+    destination = "${var.certificates_path}/certs/ca.key"
+  }
+
+  provisioner "file" {
+    content     = var.etcd_ca_certificate
+    destination = "${var.certificates_path}/certs/etcd.crt"
+  }
+
+  provisioner "file" {
+    content     = var.etcd_ca_key
+    destination = "${var.certificates_path}/certs/etcd.key"
+  }
+
+  provisioner "file" {
+    content     = var.front_proxy_ca_certificate
+    destination = "${var.certificates_path}/certs/front-proxy.crt"
+  }
+
+  provisioner "file" {
+    content     = var.front_proxy_ca_key
+    destination = "${var.certificates_path}/certs/front-proxy.key"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      var.ca_certificate != "" ? "ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_CONFIG=${var.certificates_path}/ansible.cfg ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.certificates_path}/inventory --become --become-user=root ${var.certificates_path}/upload.yml" : ":",
+      "sudo rm -r ${var.certificates_path}"
+    ]
+  }
+
   #Clone and prepup kubespray on a stable branch
   provisioner "remote-exec" {
     inline = [

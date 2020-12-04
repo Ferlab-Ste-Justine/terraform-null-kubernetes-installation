@@ -57,6 +57,11 @@ variable "cloud_init_sync_path" {
   type = string
 }
 
+variable "certificates_path" {
+  description = "Directory to upload pre-generated private keys and certificates in"
+  type = string
+}
+
 variable "bastion_dependent_ip" {
   description = "Internal ip of the bastion. Required only to set a provisioning dependency on the bastion. Not used otherwise."
   type = string
@@ -95,4 +100,40 @@ variable "k8_version" {
   description = "Kubernetes version to install"
   type = string
   default = "v1.19.3"
+}
+
+variable "ca_certificate" {
+  description = "Ca certificate in pem format"
+  type = string
+  default = ""
+}
+
+variable "ca_private_key" {
+  description = "Ca private key"
+  type = string
+  default = ""
+}
+
+variable "etcd_ca_certificate" {
+  description = "Etcd ca certificate in pem format"
+  type = string
+  default = ""
+}
+
+variable "etcd_ca_private_key" {
+  description = "Etcd private key"
+  type = string
+  default = ""
+}
+
+variable "front_proxy_ca_certificate" {
+  description = "Front proxy ca certificate in pem format"
+  type = string
+  default = ""
+}
+
+variable "front_proxy_ca_private_key" {
+  description = "Front proxy private key"
+  type = string
+  default = ""
 }
