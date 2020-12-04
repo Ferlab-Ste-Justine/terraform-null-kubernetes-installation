@@ -88,7 +88,7 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
-    content     = var.ca_key
+    content     = var.ca_private_key
     destination = "${var.certificates_path}/certs/ca.key"
   }
 
@@ -98,7 +98,7 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
-    content     = var.etcd_ca_key
+    content     = var.etcd_ca_private_key
     destination = "${var.certificates_path}/certs/etcd.key"
   }
 
@@ -108,7 +108,7 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
-    content     = var.front_proxy_ca_key
+    content     = var.front_proxy_ca_private_key
     destination = "${var.certificates_path}/certs/front-proxy.key"
   }
 
