@@ -1,5 +1,5 @@
 locals {
-  kubespray_tag = "v2.14.2"
+  kubespray_tag = "v2.16.0"
 }
 
 resource "null_resource" "kubernetes_installation" {
