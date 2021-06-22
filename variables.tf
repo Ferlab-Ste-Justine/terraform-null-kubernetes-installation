@@ -99,7 +99,7 @@ variable "k8_cluster_name" {
 variable "k8_version" {
   description = "Kubernetes version to install"
   type = string
-  default = "v1.21.1"
+  default = "v1.20.7"
 }
 
 variable "ca_certificate" {
