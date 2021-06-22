@@ -219,7 +219,7 @@ resource "null_resource" "kubernetes_installation" {
           #Add a recent version of cert-manager
           "${var.artifacts_path}/kubectl --kubeconfig=${var.artifacts_path}/admin.conf apply -f ${var.provisioning_path}/custom_addons/cert-manager/cert-manager.yaml",
           #cleanup
-          "sudo rm -r ${var.provisioning_path}"
+          #"sudo rm -r ${var.provisioning_path}"
       ]
   }
 }
