@@ -6,43 +6,42 @@ Currently, the module uses kubespray underneat the hood to achieve this and, sub
 
 Prior to running the kubernetes installation, the module will wait for cloud-init to run on all involved node.
 
-Furthermore, a configuration file for kubectl and a kubectl binary with the appropriate version will be downloaded in the bastion.
-
 # Versions
 
 This module uses of the following versions of underlying components:
-- Kubespray: v2.14.2
-- Cert-Manager: v1.0.4
+- Kubespray: v2.16.0
 
 # Input Variables
 
 The module takes the following input variables:
 
-- master_ips: The ips of the master nodes
-- worker_ips: The ips of the worker nodes
-- load_balancer_external_ip: External load-balancing ip of the master apis. Will be added to the kubernetes certificate.
-- bastion_external_ip: Ip of the bastion host that will be sshed on. It is assumed to have ssh access to all the master and worker nodes.
-- bastion_port: Port that the bastion will be sshed on. Defaults to **22**.
-- bastion_user: User that will be used to ssh on the bastion. Defaults to **ubuntu**.
-- k8_cluster_user: User that the bastion will use to ssh to machines on the kuberntes cluster
-- bastion_key_pair: Ssh key that will be used to ssh on the bastion
-- provisioning_path: Path on the bastion that will be used to copy playbooks and kubespray configuration for provisionning. Will be deleted at the end of the installation.
-- artifacts_path: Path on the bastion where the kubectl binary and admin configuration files will be downloaded.
-- cloud_init_sync_path: Path on the bastion to copy playbooks to wait for cloud-init to finish. Will be deleted after the wait is over.
-- certificates_path: Path on the bastion to upload optional user-provided private keys and certificates that will be uploaded on the kubernetes api servers. Will be deleted after the files are uploaded on the api servers.
-- bastion_dependent_ip: Placeholder variable to pass the internal ip of the bastion. Useful to force terraform to wait until the bastion is provisioned before launching this module. The variable is not used otherwise.
-- wait_on_ips: Ip of additional vms to wait for (ex: load balancer) before launching the installation.
-- revision: Internal variable used to trigger a reprovisioning of the installation when the module changes. Can be used externally (ideally only in cases of an emergency) to explicitly force a re-installation (by passing the date and time as a value for example). Such explicit retriggerings should obviously be commited in version control to keep an audit of all impacting actions on shared environments.
-- k8_ingress_http_port: Port on the kubernetes workers that will be used for ingress http traffic
-- k8_ingress_https_port: Port on the kubernetes workers that will be used for ingress https traffic
-- k8_cluster_name: Name of the kubernetes cluster. Mostly relevant if you want to reference multiple kubernetes clusters with the same configuration file. Defaullts to **cluster.local**
-- k8_version: Version of kubernetes to install. Defaults to v1.19.3.
+- **master_ips**: The ips of the master nodes
+- **worker_ips**: The ips of the worker nodes
+- **load_balancer_external_ip**: External load-balancing ip of the master apis. Will be added to the kubernetes certificate.
+- **bastion_external_ip**: Ip of the bastion host that will be sshed on. It is assumed to have ssh access to all the master and worker nodes.
+- **bastion_port**: Port that the bastion will be sshed on. Defaults to **22**.
+- **bastion_user**: User that will be used to ssh on the bastion. Defaults to **ubuntu**.
+- **k8_cluster_user**: User that the bastion will use to ssh to machines on the kuberntes cluster
+- **bastion_key_pair**: Ssh key that will be used to ssh on the bastion
+- **provisioning_path**: Path on the bastion that will be used to copy playbooks and kubespray configuration for provisionning. Will be deleted at the end of the installation.
+- **artifacts_path**: Path on the bastion where the kubectl binary and admin configuration files will be downloaded.
+- **cloud_init_sync_path**: Path on the bastion to copy playbooks to wait for cloud-init to finish. Will be deleted after the wait is over.
+- **certificates_path**: Path on the bastion to upload optional user-provided private keys and certificates that will be uploaded on the kubernetes api servers. Will be deleted after the files are uploaded on the api servers.
+- **bastion_dependent_ip**: Placeholder variable to pass the internal ip of the bastion. Useful to force terraform to wait until the bastion is provisioned before launching this module. The variable is not used otherwise.
+- **wait_on_ips**: Ip of additional vms to wait for (ex: load balancer) before launching the installation.
+- **revision**: Internal variable used to trigger a reprovisioning of the installation when the module changes. Can be used externally (ideally only in cases of an emergency) to explicitly force a re-installation (by passing the date and time as a value for example). Such explicit retriggerings should obviously be commited in version control to keep an audit of all impacting actions on shared environments.
+- **k8_ingress_http_port**: Port on the kubernetes workers that will be used for ingress http traffic
+- **k8_ingress_https_port**: Port on the kubernetes workers that will be used for ingress https traffic
+- **k8_cluster_name**: Name of the kubernetes cluster. Mostly relevant if you want to reference multiple kubernetes clusters with the same configuration file. Defaullts to **cluster.local**
+- **k8_version**: Version of kubernetes to install. Defaults to v1.20.7.
+- **kubespray_repo**: Repository to clone kubespray from. Defaults to the official repository.
+- **kubespray_repo_ref**: Tag or branch to use in the repo before running the kubespray playbooks. The default is the tag **v2.16.0** which is the tag the custom configuration of this repo is adapted to. You may not be successful if you use another tag/branch with different configuration expectations.
 
 ## User Provided Certificates Variables
 
 By default, kubespray will generate the private keys are certificates for the internal certificate authorities of kubernetes.
 
-However, if the use wishes, he can pass his own ca certificates and private keys (see following repo for an implementation: https://github.com/Ferlab-Ste-Justine/kubernetes-certificates).
+However, if the user wishes, he can pass his own ca certificates and private keys (see following repo for an implementation: https://github.com/Ferlab-Ste-Justine/kubernetes-certificates).
 
 They can be passed through the following optional input variables (not that you must provide a valid input for ALL of these variables if you wish to use them):
 

@@ -1,4 +1,3 @@
-# Based on: https://raw.githubusercontent.com/kubernetes-sigs/kubespray/master/inventory/sample/group_vars/k8s-cluster/k8s-net-flannel.yml
 # see roles/network_plugin/flannel/defaults/main.yml
 
 ## interface that should be used for flannel operations

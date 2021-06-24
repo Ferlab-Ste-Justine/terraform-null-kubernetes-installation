@@ -99,7 +99,7 @@ variable "k8_cluster_name" {
 variable "k8_version" {
   description = "Kubernetes version to install"
   type = string
-  default = "v1.19.3"
+  default = "v1.20.7"
 }
 
 variable "ca_certificate" {
@@ -136,4 +136,16 @@ variable "front_proxy_ca_private_key" {
   description = "Front proxy private key"
   type = string
   default = ""
+}
+
+variable "kubespray_repo" {
+  description = "Repository to clone kubespray from"
+  type = string
+  default = "https://github.com/kubernetes-sigs/kubespray.git"
+}
+
+variable "kubespray_repo_ref" {
+  description = "Tag or branch to checkout once the repository is cloned"
+  type = string
+  default = "v2.16.0"
 }

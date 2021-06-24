@@ -1,7 +1,3 @@
-locals {
-  kubespray_tag = "v2.14.2"
-}
-
 resource "null_resource" "kubernetes_installation" {
   #If any machine in the cluster or the api external ip has changed, we need to re-provision
   triggers = {
@@ -122,20 +118,12 @@ resource "null_resource" "kubernetes_installation" {
   #Clone and prepup kubespray on a stable branch
   provisioner "remote-exec" {
     inline = [
-        "git clone https://github.com/kubernetes-sigs/kubespray.git ${var.provisioning_path}",
+        "git clone ${var.kubespray_repo} ${var.provisioning_path}",
         "mkdir -p ${var.artifacts_path}",
-        "cd ${var.provisioning_path} && git checkout ${local.kubespray_tag}",
+        "cd ${var.provisioning_path} && git checkout ${var.kubespray_repo_ref}",
         "cd ${var.provisioning_path} && sudo pip3 install -r requirements.txt",
-        "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment",
-        #Also, add custom addons directory for addons not managed by kubespray
-        "mkdir -p ${var.provisioning_path}/custom_addons/cert-manager"
+        "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment"
     ]
-  }
-
-  #Copy custom addon files
-  provisioner "file" {
-    source      = "${path.module}/addons/cert-manager/cert-manager.yaml"
-    destination = "${var.provisioning_path}/custom_addons/cert-manager/cert-manager.yaml"
   }
 
   #Copy our custom configuration, inventory and run kubespray
@@ -166,18 +154,18 @@ resource "null_resource" "kubernetes_installation" {
 
   provisioner "file" {
     content      = templatefile(
-      "${path.module}/kubespray/configurations/k8s-cluster/addons.yml",
+      "${path.module}/kubespray/configurations/k8s_cluster/addons.yml",
       {
         ingress_http_port = var.k8_ingress_http_port
         ingress_https_port = var.k8_ingress_https_port
       }
     )
-    destination  = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/addons.yml"
+    destination  = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/addons.yml"
   }
 
   provisioner "file" {
     content     = templatefile(
-      "${path.module}/kubespray/configurations/k8s-cluster/k8s-cluster.yml", 
+      "${path.module}/kubespray/configurations/k8s_cluster/k8s-cluster.yml", 
       {
         cluster_name = var.k8_cluster_name
         artifacts_dir = var.artifacts_path
@@ -185,17 +173,17 @@ resource "null_resource" "kubernetes_installation" {
         kubernetes_version = var.k8_version
       }
     )
-    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/k8s-cluster.yml"
+    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/k8s-cluster.yml"
   }
 
   provisioner "file" {
-    source      = "${path.module}/kubespray/configurations/k8s-cluster/k8s-net-calico.yml"
-    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/k8s-net-calico.yml"
+    source      = "${path.module}/kubespray/configurations/k8s_cluster/k8s-net-calico.yml"
+    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/k8s-net-calico.yml"
   }
 
   provisioner "file" {
-    source      = "${path.module}/kubespray/configurations/k8s-cluster/k8s-net-flannel.yml"
-    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/k8s-net-flannel.yml"
+    source      = "${path.module}/kubespray/configurations/k8s_cluster/k8s-net-flannel.yml"
+    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/k8s-net-flannel.yml"
   }
 
   provisioner "file" {
@@ -212,12 +200,6 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
       inline = [
           "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.provisioning_path}/inventory/deployment/inventory --become --become-user=root ${var.provisioning_path}/cluster.yml",
-          #Unless we force kubespray to use our external api load balancer internally, it will make the kubectl configuration point to the internal ip of the first master
-          #To save ourselves an edit downstream, we automatically change it to the external load balancer ip so that the configuration file is both robust and usable anywhere
-          "cp ${var.artifacts_path}/admin.conf ${var.artifacts_path}/admin-external.conf",
-          "sed -i -E \"s/server: https:\\/\\/[0-9]+.[0-9]+.[0-9]+.[0-9]+:6443/server: https:\\/\\/${var.load_balancer_external_ip}:6443/\" ${var.artifacts_path}/admin-external.conf",
-          #Add a recent version of cert-manager
-          "${var.artifacts_path}/kubectl --kubeconfig=${var.artifacts_path}/admin.conf apply -f ${var.provisioning_path}/custom_addons/cert-manager/cert-manager.yaml",
           #cleanup
           "sudo rm -r ${var.provisioning_path}"
       ]
