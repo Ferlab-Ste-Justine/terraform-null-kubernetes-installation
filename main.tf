@@ -122,9 +122,7 @@ resource "null_resource" "kubernetes_installation" {
         "mkdir -p ${var.artifacts_path}",
         "cd ${var.provisioning_path} && git checkout ${var.kubespray_repo_ref}",
         "cd ${var.provisioning_path} && sudo pip3 install -r requirements.txt",
-        "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment",
-        #Also, add custom addons directory for addons not managed by kubespray
-        "mkdir -p ${var.provisioning_path}/custom_addons/cert-manager"
+        "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment"
     ]
   }
 
@@ -156,18 +154,18 @@ resource "null_resource" "kubernetes_installation" {
 
   provisioner "file" {
     content      = templatefile(
-      "${path.module}/kubespray/configurations/k8s-cluster/addons.yml",
+      "${path.module}/kubespray/configurations/k8s_cluster/addons.yml",
       {
         ingress_http_port = var.k8_ingress_http_port
         ingress_https_port = var.k8_ingress_https_port
       }
     )
-    destination  = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/addons.yml"
+    destination  = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/addons.yml"
   }
 
   provisioner "file" {
     content     = templatefile(
-      "${path.module}/kubespray/configurations/k8s-cluster/k8s-cluster.yml", 
+      "${path.module}/kubespray/configurations/k8s_cluster/k8s-cluster.yml", 
       {
         cluster_name = var.k8_cluster_name
         artifacts_dir = var.artifacts_path
@@ -175,17 +173,17 @@ resource "null_resource" "kubernetes_installation" {
         kubernetes_version = var.k8_version
       }
     )
-    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/k8s-cluster.yml"
+    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/k8s-cluster.yml"
   }
 
   provisioner "file" {
-    source      = "${path.module}/kubespray/configurations/k8s-cluster/k8s-net-calico.yml"
-    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/k8s-net-calico.yml"
+    source      = "${path.module}/kubespray/configurations/k8s_cluster/k8s-net-calico.yml"
+    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/k8s-net-calico.yml"
   }
 
   provisioner "file" {
-    source      = "${path.module}/kubespray/configurations/k8s-cluster/k8s-net-flannel.yml"
-    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s-cluster/k8s-net-flannel.yml"
+    source      = "${path.module}/kubespray/configurations/k8s_cluster/k8s-net-flannel.yml"
+    destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/k8s-net-flannel.yml"
   }
 
   provisioner "file" {
