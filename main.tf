@@ -1,7 +1,3 @@
-locals {
-  kubespray_tag = "v2.16.0"
-}
-
 resource "null_resource" "kubernetes_installation" {
   #If any machine in the cluster or the api external ip has changed, we need to re-provision
   triggers = {
@@ -122,16 +118,16 @@ resource "null_resource" "kubernetes_installation" {
   #Clone and prepup kubespray on a stable branch
   provisioner "remote-exec" {
     inline = [
-        "git clone https://github.com/kubernetes-sigs/kubespray.git ${var.provisioning_path}",
+        "git clone ${var.kubespray_repo} ${var.provisioning_path}",
         "mkdir -p ${var.artifacts_path}",
-        "cd ${var.provisioning_path} && git checkout ${local.kubespray_tag}",
+        "cd ${var.provisioning_path} && git checkout ${var.kubespray_repo_ref}",
         "cd ${var.provisioning_path} && sudo pip3 install -r requirements.txt",
         "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment",
         #Also, add custom addons directory for addons not managed by kubespray
         "mkdir -p ${var.provisioning_path}/custom_addons/cert-manager"
     ]
   }
-  
+
   #Copy our custom configuration, inventory and run kubespray
   provisioner "file" {
     source      = "${path.module}/kubespray/configurations/etcd.yml"

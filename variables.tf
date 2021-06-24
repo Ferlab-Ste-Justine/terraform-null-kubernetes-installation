@@ -137,3 +137,15 @@ variable "front_proxy_ca_private_key" {
   type = string
   default = ""
 }
+
+variable "kubespray_repo" {
+  description = "Repository to clone kubespray from"
+  type = string
+  default = "https://github.com/kubernetes-sigs/kubespray.git"
+}
+
+variable "kubespray_repo_ref" {
+  description = "Tag or branch to checkout once the repository is cloned"
+  type = string
+  default = "v2.16.0"
+}
