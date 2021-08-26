@@ -3,7 +3,7 @@ resource "null_resource" "kubernetes_installation" {
   triggers = {
     master_ips = join(",", var.master_ips)
     worker_ips = join(",", var.worker_ips)
-    load_balancer_external_ip = var.load_balancer_external_ip
+    load_balancer_ips = join(",", var.load_balancer_ips)
     version = var.revision
   }
 
@@ -169,7 +169,7 @@ resource "null_resource" "kubernetes_installation" {
       {
         cluster_name = var.k8_cluster_name
         artifacts_dir = var.artifacts_path
-        load_balancer_external_ip = var.load_balancer_external_ip
+        load_balancer_ips = var.load_balancer_ips
         kubernetes_version = var.k8_version
       }
     )

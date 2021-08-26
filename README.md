@@ -17,7 +17,7 @@ The module takes the following input variables:
 
 - **master_ips**: The ips of the master nodes
 - **worker_ips**: The ips of the worker nodes
-- **load_balancer_external_ip**: External load-balancing ip of the master apis. Will be added to the kubernetes certificate.
+- **load_balancer_ips**: Load-balancing ips of the master apis. Will be added to the kubernetes certificate.
 - **bastion_external_ip**: Ip of the bastion host that will be sshed on. It is assumed to have ssh access to all the master and worker nodes.
 - **bastion_port**: Port that the bastion will be sshed on. Defaults to **22**.
 - **bastion_user**: User that will be used to ssh on the bastion. Defaults to **ubuntu**.
