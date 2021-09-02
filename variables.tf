@@ -9,9 +9,10 @@ variable "worker_ips" {
 }
 
 
-variable "load_balancer_external_ip" {
-  description = "External ip of the load balancer"
-  type = string
+variable "load_balancer_ips" {
+  description = "Ips of the load balancer"
+  type = list(string)
+  default = []
 }
 
 variable "bastion_external_ip" {
