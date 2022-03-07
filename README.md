@@ -36,6 +36,7 @@ The module takes the following input variables:
 - **k8_version**: Version of kubernetes to install. Defaults to v1.20.7.
 - **kubespray_repo**: Repository to clone kubespray from. Defaults to the official repository.
 - **kubespray_repo_ref**: Tag or branch to use in the repo before running the kubespray playbooks. The default is the tag **v2.16.0** which is the tag the custom configuration of this repo is adapted to. You may not be successful if you use another tag/branch with different configuration expectations.
+- **ingress_arguments**: Extra arguments to pass to ingress-nginx (ex: **--enable-ssl-passthrough**).
 
 ## User Provided Certificates Variables
 
