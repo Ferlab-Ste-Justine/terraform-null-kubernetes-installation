@@ -110,10 +110,13 @@ ingress_nginx_configmap:
 #   9000: "default/example-go:8080"
 # ingress_nginx_configmap_udp_services:
 #   53: "kube-system/coredns:53"
-# ingress_nginx_extra_args:
-#   - --default-ssl-certificate=default/foo-tls
+%{ if length(ingress_arguments) > 0 ~}
+ingress_nginx_extra_args:
+%{ for ingress_argument in ingress_arguments ~}
+  - ${ingress_argument}
+%{ endfor ~}
+%{ endif ~}
 # ingress_nginx_class: nginx
-
 # ambassador ingress controller deployment
 ingress_ambassador_enabled: false
 # ingress_ambassador_namespace: "ambassador"

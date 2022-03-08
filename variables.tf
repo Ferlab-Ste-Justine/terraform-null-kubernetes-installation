@@ -150,3 +150,9 @@ variable "kubespray_repo_ref" {
   type = string
   default = "v2.16.0"
 }
+
+variable "ingress_arguments" {
+  description = "List of arguments to pass to the nginx ingress. Hyphens should be included in the values."
+  type = list(string)
+  default = []
+}
