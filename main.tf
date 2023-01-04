@@ -46,7 +46,8 @@ resource "null_resource" "kubernetes_installation" {
   
   provisioner "remote-exec" {
     inline = [
-      "ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_CONFIG=${var.cloud_init_sync_path}/ansible.cfg ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.cloud_init_sync_path}/inventory --become --become-user=root ${var.cloud_init_sync_path}/sync.yml",
+      "set -o errexit",
+      "ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_CONFIG=${var.cloud_init_sync_path}/ansible.cfg ansible-playbook --timeout=300 --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.cloud_init_sync_path}/inventory --become --become-user=root ${var.cloud_init_sync_path}/sync.yml",
       "sudo rm -r ${var.cloud_init_sync_path}"
     ]
   }
@@ -110,6 +111,7 @@ resource "null_resource" "kubernetes_installation" {
 
   provisioner "remote-exec" {
     inline = [
+      "set -o errexit",
       var.ca_certificate != "" ? "ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_CONFIG=${var.certificates_path}/ansible.cfg ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.certificates_path}/inventory --become --become-user=root ${var.certificates_path}/upload.yml" : ":",
       "sudo rm -r ${var.certificates_path}"
     ]
@@ -118,6 +120,7 @@ resource "null_resource" "kubernetes_installation" {
   #Clone and prepup kubespray on a stable branch
   provisioner "remote-exec" {
     inline = [
+        "set -o errexit",
         "git clone ${var.kubespray_repo} ${var.provisioning_path}",
         "mkdir -p ${var.artifacts_path}",
         "cd ${var.provisioning_path} && git checkout ${var.kubespray_repo_ref}",
@@ -200,6 +203,7 @@ resource "null_resource" "kubernetes_installation" {
 
   provisioner "remote-exec" {
       inline = [
+          "set -o errexit",
           "ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.provisioning_path}/inventory/deployment/inventory --become --become-user=root ${var.provisioning_path}/cluster.yml",
           #cleanup
           "sudo rm -r ${var.provisioning_path}"
