@@ -5,7 +5,7 @@ on: [push]
 jobs:
   Deploy:
     name: Validate the Terraform files
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
     container: hashicorp/terraform:0.12.29
     steps:
     - uses: actions/checkout@v2
