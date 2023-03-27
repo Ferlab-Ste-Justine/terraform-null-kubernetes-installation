@@ -1,3 +1,6 @@
+# ## Configure 'ip' variable to bind kubernetes services on a
+# ## different ip than the default iface
+# ## We should set etcd_member_name for etcd cluster. The node that is not a etcd member do not need to set the value, or can set the empty string value.
 [all]
 %{ for ip in master_ips ~}
 node${index(master_ips, ip) + 1} ansible_host=${ip} etcd_member_name=etcd${index(master_ips, ip) + 1}
@@ -5,6 +8,10 @@ node${index(master_ips, ip) + 1} ansible_host=${ip} etcd_member_name=etcd${index
 %{ for ip in worker_ips ~}
 node${length(master_ips) + index(worker_ips, ip) + 1} ansible_host=${ip}
 %{ endfor ~}
+
+# ## configure a bastion host if your nodes are not directly reachable
+# [bastion]
+# bastion ansible_host=x.x.x.x ansible_user=some_user
 
 [kube_control_plane]
 %{ for ip in master_ips ~}
