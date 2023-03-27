@@ -25,6 +25,9 @@ local_release_dir: "/tmp/releases"
 # Random shifts for retrying failed ops like pushing/downloading
 retry_stagger: 5
 
+# This is the user that owns tha cluster installation.
+kube_owner: kube
+
 # This is the group that the cert creation scripts chgrp the
 # cert files to. Not really changeable...
 kube_cert_group: kube-cert
@@ -62,7 +65,7 @@ credentials_dir: "{{ inventory_dir }}/credentials"
 # kube_webhook_authorization_url: https://...
 # kube_webhook_authorization_url_skip_tls_verify: false
 
-# Choose network plugin (cilium, calico, weave or flannel. Use cni for generic cni plugin)
+# Choose network plugin (cilium, calico, kube-ovn, weave or flannel. Use cni for generic cni plugin)
 # Can also be set to 'cloud', which lets the cloud provider setup appropriate routing
 kube_network_plugin: calico
 
@@ -116,16 +119,13 @@ kube_network_node_prefix_ipv6: 120
 # The port the API Server will be listening on.
 kube_apiserver_ip: "{{ kube_service_addresses|ipaddr('net')|ipaddr(1)|ipaddr('address') }}"
 kube_apiserver_port: 6443  # (https)
-# kube_apiserver_insecure_port: 8080  # (http)
-# Set to 0 to disable insecure port - Requires RBAC in authorization_modes and kube_api_anonymous_auth: true
-kube_apiserver_insecure_port: 0  # (disabled)
 
 # Kube-proxy proxyMode configuration.
 # Can be ipvs, iptables
 kube_proxy_mode: ipvs
 
 # configure arp_ignore and arp_announce to avoid answering ARP queries from kube-ipvs0 interface
-# must be set to true for MetalLB to work
+# must be set to true for MetalLB, kube-vip(ARP enabled) to work
 kube_proxy_strict_arp: false
 
 # A string slice of values which specify the addresses to use for NodePorts.
@@ -138,6 +138,7 @@ kube_proxy_nodeport_addresses: >-
   {%- else -%}
   []
   {%- endif -%}
+
 # If non-empty, will use this string as identification instead of the actual hostname
 # kube_override_hostname: >-
 #   {%- if cloud_provider is defined and cloud_provider in [ 'aws' ] -%}
@@ -145,22 +146,40 @@ kube_proxy_nodeport_addresses: >-
 #   {{ inventory_hostname }}
 #   {%- endif -%}
 
-## Encrypting Secret Data at Rest (experimental)
+## Encrypting Secret Data at Rest
 kube_encrypt_secret_data: false
+
+# Graceful Node Shutdown (Kubernetes >= 1.21.0), see https://kubernetes.io/blog/2021/04/21/graceful-node-shutdown-beta/
+# kubelet_shutdown_grace_period had to be greater than kubelet_shutdown_grace_period_critical_pods to allow
+# non-critical podsa to also terminate gracefully
+# kubelet_shutdown_grace_period: 60s
+# kubelet_shutdown_grace_period_critical_pods: 20s
 
 # DNS configuration.
 # Kubernetes cluster name, also will be used as DNS domain
 cluster_name: ${cluster_name}
 # Subdomains of DNS domain to be resolved via /etc/resolv.conf for hostnet pods
 ndots: 2
+# dns_timeout: 2
+# dns_attempts: 2
+# Custom search domains to be added in addition to the default cluster search domains
+# searchdomains:
+#   - svc.{{ cluster_name }}
+#   - default.svc.{{ cluster_name  }}
+# Remove default cluster search domains (``default.svc.{{ dns_domain }}, svc.{{ dns_domain }}``).
+# remove_default_searchdomains: false
 # Can be coredns, coredns_dual, manual or none
 dns_mode: coredns
 # Set manual server if using a custom cluster DNS server
 # manual_dns_server: 10.x.x.x
 # Enable nodelocal dns cache
 enable_nodelocaldns: true
+enable_nodelocaldns_secondary: false
 nodelocaldns_ip: 169.254.25.10
 nodelocaldns_health_port: 9254
+nodelocaldns_second_health_port: 9256
+nodelocaldns_bind_metrics_host_ip: false
+nodelocaldns_secondary_skew_seconds: 5
 # nodelocaldns_external_zones:
 # - zones:
 #   - example.com
@@ -174,11 +193,26 @@ nodelocaldns_health_port: 9254
 #   nameservers:
 #   - 192.168.0.53
 #   cache: 0
+# - zones:
+#   - mydomain.tld
+#   nameservers:
+#   - 10.233.0.3
+#   cache: 5
+#   rewrite:
+#   - name website.tld website.namespace.svc.cluster.local
 # Enable k8s_external plugin for CoreDNS
 enable_coredns_k8s_external: false
 coredns_k8s_external_zone: k8s_external.local
 # Enable endpoint_pod_names option for kubernetes plugin
 enable_coredns_k8s_endpoint_pod_names: false
+# Set forward options for upstream DNS servers in coredns (and nodelocaldns) config
+# dns_upstream_forward_extra_opts:
+#   policy: sequential
+# Apply extra options to coredns kubernetes plugin
+# coredns_kubernetes_extra_opts:
+#   - 'fallthrough example.local'
+# Forward extra domains to the coredns kubernetes plugin
+# coredns_kubernetes_extra_domains: ''
 
 # Can be docker_dns, host_resolvconf or none
 resolvconf_mode: docker_dns
@@ -191,6 +225,7 @@ dns_domain: "{{ cluster_name }}"
 
 ## Container runtime
 ## docker for docker, crio for cri-o and containerd for containerd.
+## Default: containerd
 container_manager: docker
 
 # Additional container runtimes
@@ -204,13 +239,9 @@ k8s_image_pull_policy: IfNotPresent
 # audit log for kubernetes
 kubernetes_audit: false
 
-# dynamic kubelet configuration
-dynamic_kubelet_configuration: false
-
 # define kubelet config dir for dynamic kubelet
 # kubelet_config_dir:
 default_kubelet_config_dir: "{{ kube_config_dir }}/dynamic_kubelet_dir"
-dynamic_kubelet_configuration_dir: "{{ kubelet_config_dir | default(default_kubelet_config_dir) }}"
 
 # pod security policy (RBAC must be enabled either by having 'RBAC' in authorization_modes or kubeadm enabled)
 podsecuritypolicy_enabled: false
@@ -224,6 +255,8 @@ podsecuritypolicy_enabled: false
 # Make a copy of kubeconfig on the host that runs Ansible in {{ inventory_dir }}/artifacts
 kubeconfig_localhost: true
 artifacts_dir: ${artifacts_dir}
+# Use ansible_host as external api ip when copying over kubeconfig.
+# kubeconfig_localhost_ansible_host: false
 # Download kubectl onto the host that runs Ansible in {{ bin_dir }}
 kubectl_localhost: true
 
@@ -231,14 +264,48 @@ kubectl_localhost: true
 # Acceptable options are 'pods', 'system-reserved', 'kube-reserved' and ''. Default is "".
 # kubelet_enforce_node_allocatable: pods
 
+## Set runtime and kubelet cgroups when using systemd as cgroup driver (default)
+# kubelet_runtime_cgroups: "{{ kube_reserved_cgroups }}/{{ container_manager }}.service"
+# kubelet_kubelet_cgroups: "{{ kube_reserved_cgroups }}/kubelet.service"
+
+## Set runtime and kubelet cgroups when using cgroupfs as cgroup driver
+# kubelet_runtime_cgroups_cgroupfs: "/system.slice/{{ container_manager }}.service"
+# kubelet_kubelet_cgroups_cgroupfs: "/system.slice/kubelet.service"
+
+# Optionally reserve this space for kube daemons.
+# kube_reserved: true
+## Uncomment to override default values
+## The following two items need to be set when kube_reserved is true
+# kube_reserved_cgroups_for_service_slice: kube.slice
+# kube_reserved_cgroups: "/{{ kube_reserved_cgroups_for_service_slice }}"
+# kube_memory_reserved: 256Mi
+# kube_cpu_reserved: 100m
+# kube_ephemeral_storage_reserved: 2Gi
+# kube_pid_reserved: "1000"
+# Reservation for master hosts
+# kube_master_memory_reserved: 512Mi
+# kube_master_cpu_reserved: 200m
+# kube_master_ephemeral_storage_reserved: 2Gi
+# kube_master_pid_reserved: "1000"
+
 ## Optionally reserve resources for OS system daemons.
 # system_reserved: true
 ## Uncomment to override default values
+## The following two items need to be set when system_reserved is true
+# system_reserved_cgroups_for_service_slice: system.slice
+# system_reserved_cgroups: "/{{ system_reserved_cgroups_for_service_slice }}"
 # system_memory_reserved: 512Mi
 # system_cpu_reserved: 500m
+# system_ephemeral_storage_reserved: 2Gi
 ## Reservation for master hosts
 # system_master_memory_reserved: 256Mi
 # system_master_cpu_reserved: 250m
+# system_master_ephemeral_storage_reserved: 2Gi
+
+## Eviction Thresholds to avoid system OOMs
+# https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#eviction-thresholds
+# eviction_hard: {}
+# eviction_hard_control_plane: {}
 
 # An alternative flexvolume plugin directory
 # kubelet_flexvolumes_plugins_dir: /usr/libexec/kubernetes/kubelet-plugins/volume/exec
@@ -271,7 +338,7 @@ persistent_volumes_enabled: false
 # nvidia_driver_install_centos_container: atzedevries/nvidia-centos-driver-installer:2
 # nvidia_driver_install_ubuntu_container: gcr.io/google-containers/ubuntu-nvidia-driver-installer@sha256:7df76a0f0a17294e86f691c81de6bbb7c04a1b4b3d4ea4e7e2cccdc42e1f6d63
 ## NVIDIA GPU device plugin image.
-# nvidia_gpu_device_plugin_container: "k8s.gcr.io/nvidia-gpu-device-plugin@sha256:0842734032018be107fa2490c98156992911e3e1f2a21e059ff0105b07dd8e9e"
+# nvidia_gpu_device_plugin_container: "registry.k8s.io/nvidia-gpu-device-plugin@sha256:0842734032018be107fa2490c98156992911e3e1f2a21e059ff0105b07dd8e9e"
 
 ## Support tls min version, Possible values: VersionTLS10, VersionTLS11, VersionTLS12, VersionTLS13.
 # tls_min_version: ""
@@ -308,3 +375,9 @@ event_ttl_duration: "1h0m0s"
 auto_renew_certificates: false
 # First Monday of each month
 # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
+
+# kubeadm patches path
+kubeadm_patches:
+  enabled: false
+  source_dir: "{{ inventory_dir }}/patches"
+  dest_dir: "{{ kube_config_dir }}/patches"

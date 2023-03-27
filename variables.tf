@@ -100,7 +100,33 @@ variable "k8_cluster_name" {
 variable "k8_version" {
   description = "Kubernetes version to install"
   type = string
-  default = "v1.20.7"
+  default = "v1.25.6"
+}
+
+variable "custom_container_repos" {
+  description = "Non-default container repos. Image names can be left with the empty string to go with the default"
+  type        = object({
+    enabled     = bool
+    registry    = string
+    image_names = object({
+      coredns                  = string
+      dnsautoscaler            = string
+      ingress_nginx_controller = string
+      nodelocaldns             = string
+      pause                    = string
+    })
+  })
+  default = {
+    enabled     = false
+    registry    = ""
+    image_names = {
+      coredns                  = ""
+      dnsautoscaler            = ""
+      ingress_nginx_controller = ""
+      nodelocaldns             = ""
+      pause                    = ""
+    }
+  }
 }
 
 variable "ca_certificate" {
@@ -148,7 +174,13 @@ variable "kubespray_repo" {
 variable "kubespray_repo_ref" {
   description = "Tag or branch to checkout once the repository is cloned"
   type = string
-  default = "v2.16.0"
+  default = "v2.21.0"
+}
+
+variable "kubespray_image" {
+  description = "Docker image of kubespray"
+  type = string
+  default = "ferlabcrsj/kubespray:2.21.0"
 }
 
 variable "ingress_arguments" {

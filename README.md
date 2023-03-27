@@ -1,15 +1,10 @@
 # About
 
-This is a terraform module to install kubernetes on a a bunch of master and worker nodes. The presence of a bastion with ansible installed is presumed.
+This is a terraform module to install kubernetes on a a bunch of master and worker nodes. The presence of a bastion with docker installed is presumed.
 
 Currently, the module uses kubespray underneat the hood to achieve this and, subject to the limitations of kubespray, should be idempotent.
 
 Prior to running the kubernetes installation, the module will wait for cloud-init to run on all involved node.
-
-# Versions
-
-This module uses of the following versions of underlying components:
-- Kubespray: v2.16.0
 
 # Input Variables
 
@@ -33,9 +28,19 @@ The module takes the following input variables:
 - **k8_ingress_http_port**: Port on the kubernetes workers that will be used for ingress http traffic
 - **k8_ingress_https_port**: Port on the kubernetes workers that will be used for ingress https traffic
 - **k8_cluster_name**: Name of the kubernetes cluster. Mostly relevant if you want to reference multiple kubernetes clusters with the same configuration file. Defaullts to **cluster.local**
-- **k8_version**: Version of kubernetes to install. Defaults to v1.20.7.
+- **k8_version**: Version of kubernetes to install. Defaults to **v1.25.6**.
+- **custom_container_repos**: Non-default container repos. Image names can be left with the empty string to go with the default.
+  - **enabled**: If set to false (the default), no custom container repos will be used.
+  - **registry**: Registry name with the namespace (or account).
+  - **image_names**: Image names.
+    - **coredns**: CoreDNS image name.
+    - **dnsautoscaler**: DNS-Autoscaler image name.
+    - **ingress_nginx_controller**: NGINX-Ingress-Controller image name.
+    - **nodelocaldns**: NodeLocal-DNSCache image name.
+    - **pause**: Pause image name.
 - **kubespray_repo**: Repository to clone kubespray from. Defaults to the official repository.
-- **kubespray_repo_ref**: Tag or branch to use in the repo before running the kubespray playbooks. The default is the tag **v2.16.0** which is the tag the custom configuration of this repo is adapted to. You may not be successful if you use another tag/branch with different configuration expectations.
+- **kubespray_repo_ref**: Tag or branch to use in the repo before running the kubespray playbooks. The default is the tag **v2.21.0** which is the tag the custom configuration of this repo is adapted to. You may not be successful if you use another tag/branch with different configuration expectations.
+- **kubespray_image**: Docker image to use for running the kubespray playbooks. The default is **ferlabcrsj/kubespray:2.21.0** which correlates with the value of **kubespray_repo_ref**.
 - **ingress_arguments**: Extra arguments to pass to ingress-nginx (ex: **--enable-ssl-passthrough**).
 
 ## User Provided Certificates Variables
