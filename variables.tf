@@ -156,3 +156,33 @@ variable "ingress_arguments" {
   type = list(string)
   default = []
 }
+
+//See: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#kube-reserved
+variable "workers_kube_reserved_resources" {
+  description = "Resources that should be reserved for kubernetes system deamons (kubelet, container runtime, etc) on workers"
+  type        = object({
+    cpu = string,
+    memory = string,
+    ephemeral_storage = string,
+  })
+  default = {
+    cpu = ""
+    memory = ""
+    ephemeral_storage=""
+  }
+}
+
+//See: https://kubernetes.io/docs/tasks/administer-cluster/reserve-compute-resources/#system-reserved
+variable "workers_system_reserved_resources" {
+  description = "Resources that should be reserved for os system deamons (kubelet, container runtime, etc) on workers"
+  type        = object({
+    cpu = string,
+    memory = string,
+    ephemeral_storage = string,
+  })
+  default = {
+    cpu = ""
+    memory = ""
+    ephemeral_storage=""
+  }
+}

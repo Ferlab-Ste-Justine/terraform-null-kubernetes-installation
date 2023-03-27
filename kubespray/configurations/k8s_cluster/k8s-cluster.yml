@@ -308,3 +308,15 @@ event_ttl_duration: "1h0m0s"
 auto_renew_certificates: false
 # First Monday of each month
 # auto_renew_certificates_systemd_calendar: "Mon *-*-1,2,3,4,5,6,7 03:{{ groups['kube_control_plane'].index(inventory_hostname) }}0:00"
+
+%{ if workers_system_reserved_resources.cpu != "" || workers_system_reserved_resources.memory != "" || workers_system_reserved_resources.ephemeral_storage != "" || workers_kube_reserved_resources.cpu != "" || workers_kube_reserved_resources.memory != "" || workers_kube_reserved_resources.ephemeral_storage != "" ~}
+kubelet_node_config_extra_args:
+  systemReserved:
+    cpu: ${workers_system_reserved_resources.cpu}
+    memory: ${workers_system_reserved_resources.memory}
+    ephemeral-storage: ${workers_system_reserved_resources.ephemeral_storage}
+  kubeReserved:
+    cpu: ${workers_kube_reserved_resources.cpu}
+    memory: ${workers_kube_reserved_resources.memory}
+    ephemeral-storage: ${workers_kube_reserved_resources.ephemeral_storage}
+%{ endif ~}
