@@ -44,7 +44,11 @@
 
 # containerd_max_container_log_line_size: -1
 
-# containerd_registry_auth:
-#   - registry: 10.0.0.2:5000
-#     username: user
-#     password: pass
+%{ if length(container_registry_credentials) > 0 ~}
+containerd_registry_auth:
+%{ for registry_creds in container_registry_credentials ~}
+  - registry: ${registry_creds.registry}
+    username: ${registry_creds.username}
+    password: ${registry_creds.password}
+%{ endfor ~}
+%{ endif ~}

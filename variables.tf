@@ -8,7 +8,6 @@ variable "worker_ips" {
   type = list(string)
 }
 
-
 variable "load_balancer_ips" {
   description = "Ips of the load balancer"
   type = list(string)
@@ -186,5 +185,15 @@ variable "kubespray_image" {
 variable "ingress_arguments" {
   description = "List of arguments to pass to the nginx ingress. Hyphens should be included in the values."
   type = list(string)
+  default = []
+}
+
+variable "container_registry_credentials" {
+  description = "Credentials to dependent container registries"
+  type = list(object({
+    registry = string
+    username = string
+    password = string
+  }))
   default = []
 }

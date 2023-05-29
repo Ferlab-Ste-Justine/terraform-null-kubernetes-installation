@@ -141,8 +141,13 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/kubespray/configurations/all/containerd.yml"
-    destination = "${var.provisioning_path}/inventory/deployment/group_vars/all/containerd.yml"
+    content      = templatefile(
+      "${path.module}/kubespray/configurations/all/containerd.yml",
+      {
+        container_registry_credentials = var.container_registry_credentials
+      }
+    )
+    destination  = "${var.provisioning_path}/inventory/deployment/group_vars/all/containerd.yml"
   }
 
   provisioner "file" {
