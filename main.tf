@@ -201,7 +201,12 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/kubespray/configurations/k8s_cluster/k8s-net-calico.yml"
+    content     = templatefile(
+      "${path.module}/kubespray/configurations/k8s_cluster/k8s-net-calico.yml", 
+      {
+        calico = var.calico
+      }
+    )
     destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/k8s-net-calico.yml"
   }
 

@@ -197,3 +197,22 @@ variable "container_registry_credentials" {
   }))
   default = []
 }
+
+variable "calico" {
+  description = "Some configurable parameters for Calico"
+  type = object({
+    iptables_backend   = string
+    //https://docs.tigera.io/calico/latest/networking/configuring/mtu#determine-mtu-size
+    mtu                = number
+    //https://docs.tigera.io/calico/latest/networking/determine-best-networking#networking-options
+    //https://docs.tigera.io/calico/latest/networking/configuring/bgp
+    network_backend    = string
+    encapsulation_mode = string
+  })
+  default = {
+    iptables_backend   = "Legacy"
+    mtu                = 1500
+    network_backend    = "bird"
+    encapsulation_mode = "Always"
+  }
+}
