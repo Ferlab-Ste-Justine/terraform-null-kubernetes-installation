@@ -229,6 +229,7 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
       inline = [
           "set -o errexit",
+          "if [ -d "${var.artifacts_path}" ]; then rm -Rf ${var.artifacts_path}; fi",
           "mkdir -p ${var.artifacts_path}",
           "sudo docker run --rm -t --mount type=bind,src=${var.provisioning_path},dst=${var.provisioning_path} --mount type=bind,src=${var.artifacts_path},dst=${var.artifacts_path} --mount type=bind,src=/home/${var.bastion_user}/.ssh/id_rsa,dst=/home/${var.bastion_user}/.ssh/id_rsa -e ANSIBLE_HOST_KEY_CHECKING=False ${var.kubespray_image} ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.provisioning_path}/inventory/deployment/inventory --become --become-user=root ${var.provisioning_path}/cluster.yml",
           "sudo chown -R $(id -u):$(id -g) ${var.artifacts_path}",
