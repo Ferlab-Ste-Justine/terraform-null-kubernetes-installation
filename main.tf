@@ -151,6 +151,16 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
+    content      = templatefile(
+      "${path.module}/kubespray/configurations/all/offline.yml",
+      {
+        custom_container_repos = var.custom_container_repos
+      }
+    )
+    destination  = "${var.provisioning_path}/inventory/deployment/group_vars/all/offline.yml"
+  }
+
+  provisioner "file" {
     source      = "${path.module}/kubespray/configurations/all/openstack.yml"
     destination = "${var.provisioning_path}/inventory/deployment/group_vars/all/openstack.yml"
   }

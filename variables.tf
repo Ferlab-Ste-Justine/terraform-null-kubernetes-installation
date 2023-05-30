@@ -103,6 +103,32 @@ variable "k8_version" {
   default = "v1.20.7"
 }
 
+variable "custom_container_repos" {
+  description = "Non-default container repos. Image names can be left with the empty string to go with the default"
+  type        = object({
+    enabled     = bool
+    registry    = string
+    image_names = object({
+      coredns                  = string
+      dnsautoscaler            = string
+      ingress_nginx_controller = string
+      nodelocaldns             = string
+      pause                    = string
+    })
+  })
+  default = {
+    enabled     = false
+    registry    = ""
+    image_names = {
+      coredns                  = ""
+      dnsautoscaler            = ""
+      ingress_nginx_controller = ""
+      nodelocaldns             = ""
+      pause                    = ""
+    }
+  }
+}
+
 variable "ca_certificate" {
   description = "Ca certificate in pem format"
   type = string

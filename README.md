@@ -34,6 +34,15 @@ The module takes the following input variables:
 - **k8_ingress_https_port**: Port on the kubernetes workers that will be used for ingress https traffic
 - **k8_cluster_name**: Name of the kubernetes cluster. Mostly relevant if you want to reference multiple kubernetes clusters with the same configuration file. Defaullts to **cluster.local**
 - **k8_version**: Version of kubernetes to install. Defaults to v1.20.7.
+- **custom_container_repos**: Non-default container repos. Image names can be left with the empty string to go with the default.
+  - **enabled**: If set to false (the default), no custom container repos will be used.
+  - **registry**: Registry name with the namespace (or account).
+  - **image_names**: Image names.
+    - **coredns**: CoreDNS image name.
+    - **dnsautoscaler**: DNS-Autoscaler image name.
+    - **ingress_nginx_controller**: NGINX-Ingress-Controller image name.
+    - **nodelocaldns**: NodeLocal-DNSCache image name.
+    - **pause**: Pause image name.
 - **kubespray_repo**: Repository to clone kubespray from. Defaults to the official repository.
 - **kubespray_repo_ref**: Tag or branch to use in the repo before running the kubespray playbooks. The default is the tag **v2.16.0** which is the tag the custom configuration of this repo is adapted to. You may not be successful if you use another tag/branch with different configuration expectations.
 - **ingress_arguments**: Extra arguments to pass to ingress-nginx (ex: **--enable-ssl-passthrough**).
