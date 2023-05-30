@@ -123,6 +123,7 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
     inline = [
         "set -o errexit",
+        "if [ -d \"${var.provisioning_path}\" ]; then rm -Rf ${var.provisioning_path}; fi",
         "git clone ${var.kubespray_repo} ${var.provisioning_path}",
         "cd ${var.provisioning_path} && git checkout ${var.kubespray_repo_ref}",
         "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment"
