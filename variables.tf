@@ -211,7 +211,7 @@ variable "calico" {
   })
   default = {
     iptables_backend   = "Legacy"
-    mtu                = 1500
+    mtu                = 1480
     network_backend    = "bird"
     encapsulation_mode = "Always"
   }
