@@ -94,11 +94,15 @@ calico_network_backend: ${calico.network_backend}
 # set IP in IP encapsulation mode: "Always", "CrossSubnet", "Never"
 %{ if calico.network_backend == "bird" ~}
 calico_ipip_mode: '${calico.encapsulation_mode}'
+%{ else ~}
+calico_ipip_mode: 'Never'
 %{ endif ~}
 
 # set VXLAN encapsulation mode: "Always", "CrossSubnet", "Never"
 %{ if calico.network_backend == "vxlan" ~}
 calico_vxlan_mode: '${calico.encapsulation_mode}'
+%{ else ~}
+calico_vxlan_mode: 'Never'
 %{ endif ~}
 
 # set VXLAN port and VNI
