@@ -43,7 +43,9 @@ calico_pool_blocksize: 26
 # You can set MTU value here. If left undefined or empty, it will
 # not be specified in calico CNI config, so Calico will use built-in
 # defaults. The value should be a number, not a string.
-# calico_mtu: 1500
+%{ if calico.mtu > 0 ~}
+calico_mtu: ${calico.mtu}
+%{ endif ~}
 
 # Configure the MTU to use for workload interfaces and tunnels.
 # - If Wireguard is enabled, subtract 60 from your network MTU (i.e 1500-60=1440)
@@ -69,7 +71,7 @@ calico_pool_blocksize: 26
 # calico_datastore: "kdd"
 
 # Choose Calico iptables backend: "Legacy", "Auto" or "NFT"
-# calico_iptables_backend: "Auto"
+calico_iptables_backend: "${calico.iptables_backend}"
 
 # Use typha (only with kdd)
 # typha_enabled: false
@@ -86,14 +88,22 @@ calico_pool_blocksize: 26
 
 # Set calico network backend: "bird", "vxlan" or "none"
 # bird enable BGP routing, required for ipip and no encapsulation modes
-# calico_network_backend: vxlan
+calico_network_backend: ${calico.network_backend}
 
 # IP in IP and VXLAN is mutualy exclusive modes.
 # set IP in IP encapsulation mode: "Always", "CrossSubnet", "Never"
-# calico_ipip_mode: 'Never'
+%{ if calico.network_backend == "bird" ~}
+calico_ipip_mode: '${calico.encapsulation_mode}'
+%{ else ~}
+calico_ipip_mode: 'Never'
+%{ endif ~}
 
 # set VXLAN encapsulation mode: "Always", "CrossSubnet", "Never"
-# calico_vxlan_mode: 'Always'
+%{ if calico.network_backend == "vxlan" ~}
+calico_vxlan_mode: '${calico.encapsulation_mode}'
+%{ else ~}
+calico_vxlan_mode: 'Never'
+%{ endif ~}
 
 # set VXLAN port and VNI
 # calico_vxlan_vni: 4096

@@ -123,6 +123,7 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
     inline = [
         "set -o errexit",
+        "if [ -d \"${var.provisioning_path}\" ]; then rm -Rf ${var.provisioning_path}; fi",
         "git clone ${var.kubespray_repo} ${var.provisioning_path}",
         "cd ${var.provisioning_path} && git checkout ${var.kubespray_repo_ref}",
         "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment"
@@ -141,8 +142,13 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/kubespray/configurations/all/containerd.yml"
-    destination = "${var.provisioning_path}/inventory/deployment/group_vars/all/containerd.yml"
+    content      = templatefile(
+      "${path.module}/kubespray/configurations/all/containerd.yml",
+      {
+        container_registry_credentials = var.container_registry_credentials
+      }
+    )
+    destination  = "${var.provisioning_path}/inventory/deployment/group_vars/all/containerd.yml"
   }
 
   provisioner "file" {
@@ -196,7 +202,12 @@ resource "null_resource" "kubernetes_installation" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/kubespray/configurations/k8s_cluster/k8s-net-calico.yml"
+    content     = templatefile(
+      "${path.module}/kubespray/configurations/k8s_cluster/k8s-net-calico.yml", 
+      {
+        calico = var.calico
+      }
+    )
     destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/k8s-net-calico.yml"
   }
 
@@ -219,6 +230,7 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
       inline = [
           "set -o errexit",
+          "if [ -d \"${var.artifacts_path}\" ]; then rm -Rf ${var.artifacts_path}; fi",
           "mkdir -p ${var.artifacts_path}",
           "sudo docker run --rm -t --mount type=bind,src=${var.provisioning_path},dst=${var.provisioning_path} --mount type=bind,src=${var.artifacts_path},dst=${var.artifacts_path} --mount type=bind,src=/home/${var.bastion_user}/.ssh/id_rsa,dst=/home/${var.bastion_user}/.ssh/id_rsa -e ANSIBLE_HOST_KEY_CHECKING=False ${var.kubespray_image} ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.provisioning_path}/inventory/deployment/inventory --become --become-user=root ${var.provisioning_path}/cluster.yml",
           "sudo chown -R $(id -u):$(id -g) ${var.artifacts_path}",

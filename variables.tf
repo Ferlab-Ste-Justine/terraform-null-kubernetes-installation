@@ -8,7 +8,6 @@ variable "worker_ips" {
   type = list(string)
 }
 
-
 variable "load_balancer_ips" {
   description = "Ips of the load balancer"
   type = list(string)
@@ -187,4 +186,33 @@ variable "ingress_arguments" {
   description = "List of arguments to pass to the nginx ingress. Hyphens should be included in the values."
   type = list(string)
   default = []
+}
+
+variable "container_registry_credentials" {
+  description = "Credentials to dependent container registries"
+  type = list(object({
+    registry = string
+    username = string
+    password = string
+  }))
+  default = []
+}
+
+variable "calico" {
+  description = "Some configurable parameters for Calico"
+  type = object({
+    iptables_backend   = string
+    //https://docs.tigera.io/calico/latest/networking/configuring/mtu#determine-mtu-size
+    mtu                = number
+    //https://docs.tigera.io/calico/latest/networking/determine-best-networking#networking-options
+    //https://docs.tigera.io/calico/latest/networking/configuring/bgp
+    network_backend    = string
+    encapsulation_mode = string
+  })
+  default = {
+    iptables_backend   = "Legacy"
+    mtu                = 1480
+    network_backend    = "bird"
+    encapsulation_mode = "Always"
+  }
 }
