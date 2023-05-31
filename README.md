@@ -44,13 +44,13 @@ The module takes the following input variables:
 - **ingress_arguments**: Extra arguments to pass to ingress-nginx (ex: **--enable-ssl-passthrough**).
 - **container_registry_credentials**: Credentials to various container registries to pass to containerd. It should be an array of objects, each with the following keys:
   - **registry**: Url of the registry
-    **username**: Username to authenticate against the registry
-    **password**: Password to authenticate against the registry
+  - **username**: Username to authenticate against the registry
+  - **password**: Password to authenticate against the registry
 - **calico**: Parameters to configure the calico cni (https://www.tigera.io/tigera-products/calico/). The defaults are well adapted to our setup. It has the following parameters:
   - **iptables_backend**: Iptables backend to use. Can be **Legacy**, **NFT** or **Auto**. Defaults to **Legacy**.
-  - **mtu**: Mtu configuration for the virtual interfaces calico will manage. Defaults to 1500. Can be set to 0 in which case calico will get the value from the host's interfaces.
+  - **mtu**: Mtu configuration for the virtual interfaces calico will manage. Defaults to **1480**. Can be set to 0 in which case calico will get the value from the host's interfaces.
   - **network_backend**: Calico network backend to use. Can be **bird**, **vxlan** or "none". Defaults to **bird**.
-  - **encapsulation_mode**: Defines when to use network encapsulation with the chose network backend. Can be **Always**, **CrossSubnet** and **Never**. Defaults to **Always**.
+  - **encapsulation_mode**: Defines when to use network encapsulation with the chose network backend. Can be **Always**, **CrossSubnet** or **Never**. Defaults to **Always**.
 
 ## User Provided Certificates Variables
 
