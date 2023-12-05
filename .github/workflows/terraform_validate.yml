@@ -6,7 +6,7 @@ jobs:
   Deploy:
     name: Validate the Terraform files
     runs-on: ubuntu-22.04
-    container: hashicorp/terraform:0.12.29
+    container: hashicorp/terraform:1.2.9
     steps:
     - uses: actions/checkout@v2
     - name: Initialize the terraform modules
