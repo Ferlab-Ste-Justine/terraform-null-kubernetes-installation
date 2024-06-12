@@ -14,3 +14,23 @@ etcd_data_dir: /var/lib/etcd
 ## Settings for etcd deployment type
 # Set this to docker if you are using container_manager: docker
 etcd_deployment_type: host
+
+etcd_supported_versions:
+  v1.25: "v3.5.14"
+  v1.24: "v3.5.14"
+  v1.23: "v3.5.14"
+
+etcd_binary_checksums:
+  # Etcd does not have arm32 builds at the moment, having some dummy value is
+  # required to avoid "no attribute" error
+  arm:
+    v3.5.6: 0
+  arm64:
+    v3.5.6: 888e25c9c94702ac1254c7655709b44bb3711ebaabd3cb05439f3dd1f2b51a87
+    v3.5.14: 90510c79c4aae3c3313691f5770fc53b3ac883338fc0254bf8d22460acd3c19d
+  amd64:
+    v3.5.6: 4db32e3bc06dd0999e2171f76a87c1cffed8369475ec7aa7abee9023635670fb
+    v3.5.14: b0b34298f53f6830f08e7ddc57fc74dc45563216a66e94d9e6b0b9e0b0281b34
+  ppc64le:
+    v3.5.6: e235cb885996b8aac133975e0077eaf0a2f8dc7062ad052fa7395668a365906b
+    v3.5.14: 01681d4d33bba5130c9cffca42c35b0f68e0d991b0b4ee65dab6fd36568d4fee
