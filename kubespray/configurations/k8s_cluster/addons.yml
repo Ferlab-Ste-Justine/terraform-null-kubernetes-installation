@@ -114,8 +114,6 @@ ingress_publish_status_address: ""
 ingress_nginx_namespace: "ingress-nginx"
 ingress_nginx_insecure_port: ${ingress_http_port}
 ingress_nginx_secure_port: ${ingress_https_port}
-ingress_nginx_configmap:
-  ssl-redirect: "false"
 #   map-hash-bucket-size: "128"
 #   ssl-protocols: "TLSv1.2 TLSv1.3"
 # ingress_nginx_configmap_tcp_services:
