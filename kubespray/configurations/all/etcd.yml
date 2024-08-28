@@ -16,9 +16,9 @@ etcd_data_dir: /var/lib/etcd
 etcd_deployment_type: host
 
 etcd_supported_versions:
-  v1.29: "v3.5.12"
-  v1.28: "v3.5.12"
-  v1.27: "v3.5.12"
+  v1.29: "v3.5.14"
+  v1.28: "v3.5.14"
+  v1.27: "v3.5.14"
   v1.25: "v3.5.14"
   v1.24: "v3.5.14"
   v1.23: "v3.5.14"
