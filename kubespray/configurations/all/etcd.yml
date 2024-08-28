@@ -27,6 +27,7 @@ etcd_binary_checksums:
   # Etcd does not have arm32 builds at the moment, having some dummy value is
   # required to avoid "no attribute" error
   arm:
+    v3.5.14: 0
     v3.5.12: 0
     v3.5.11: 0
     v3.5.10: 0
