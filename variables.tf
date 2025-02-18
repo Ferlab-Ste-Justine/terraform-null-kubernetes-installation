@@ -188,6 +188,12 @@ variable "ingress_arguments" {
   default = []
 }
 
+variable "ingress_version" {
+  description = "Version of the nginx ingress. Specify only if you wish to override the default version specified in kubespray"
+  type = string
+  default = ""
+}
+
 variable "container_registry_credentials" {
   description = "Credentials to dependent container registries"
   type = list(object({

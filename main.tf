@@ -183,6 +183,7 @@ resource "null_resource" "kubernetes_installation" {
         ingress_http_port = var.k8_ingress_http_port
         ingress_https_port = var.k8_ingress_https_port
         ingress_arguments = var.ingress_arguments
+        ingress_version = var.ingress_version
       }
     )
     destination  = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/addons.yml"

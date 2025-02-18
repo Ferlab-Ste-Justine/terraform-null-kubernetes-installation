@@ -98,6 +98,9 @@ rbd_provisioner_enabled: false
 
 # Nginx ingress controller deployment
 ingress_nginx_enabled: true
+%{ if ingress_version != "" ~}
+ingress_nginx_version: "${ingress_version}"
+%{ endif ~}
 ingress_nginx_host_network: false
 ingress_publish_status_address: ""
 # ingress_nginx_nodeselector:

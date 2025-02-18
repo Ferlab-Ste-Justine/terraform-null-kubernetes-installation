@@ -42,6 +42,7 @@ The module takes the following input variables:
 - **kubespray_repo_ref**: Tag or branch to use in the repo before running the kubespray playbooks. The default is the tag **v2.21.0** which is the tag the custom configuration of this repo is adapted to. You may not be successful if you use another tag/branch with different configuration expectations.
 - **kubespray_image**: Docker image to use for running the kubespray playbooks. The default is **ferlabcrsj/kubespray:2.21.0** which correlates with the value of **kubespray_repo_ref**.
 - **ingress_arguments**: Extra arguments to pass to ingress-nginx (ex: **--enable-ssl-passthrough**).
+- **ingress_version**: Allows you to override the nginx ingress version that kubespray installs by default, which is useful if, for example, you want to install the latest bugfix version without having to upgrade everything.
 - **container_registry_credentials**: Credentials to various container registries to pass to containerd. It should be an array of objects, each with the following keys:
   - **registry**: Url of the registry
   - **username**: Username to authenticate against the registry
