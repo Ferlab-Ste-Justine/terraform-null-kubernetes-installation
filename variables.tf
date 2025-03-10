@@ -99,7 +99,7 @@ variable "k8_cluster_name" {
 variable "k8_version" {
   description = "Kubernetes version to install"
   type = string
-  default = "v1.29.5"
+  default = "v1.31.4"
 }
 
 variable "custom_container_repos" {
@@ -166,21 +166,22 @@ variable "front_proxy_ca_private_key" {
 
 variable "kubespray_repo" {
   description = "Repository to clone kubespray from"
-  type = string
-  default = "https://github.com/kubernetes-sigs/kubespray.git"
+  type        = string
+  default     = "https://github.com/kubernetes-sigs/kubespray.git"
 }
 
 variable "kubespray_repo_ref" {
   description = "Tag or branch to checkout once the repository is cloned"
-  type = string
-  default = "v2.25.0"
+  type        = string
+  default     = "v2.27.0"
 }
 
 variable "kubespray_image" {
   description = "Docker image of kubespray"
-  type = string
-  default = "quay.io/kubespray/kubespray:v2.25.0"
+  type        = string
+  default     = "quay.io/kubespray/kubespray:v2.27.0"
 }
+
 
 variable "ingress_arguments" {
   description = "List of arguments to pass to the nginx ingress. Hyphens should be included in the values."
