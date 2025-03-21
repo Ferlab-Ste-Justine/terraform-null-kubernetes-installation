@@ -45,6 +45,7 @@
 # containerd_max_container_log_line_size: -1
 
 %{ if length(container_registry_credentials) > 0 ~}
+image_pull_command: ctr images pull -u "${container_registry_credentials.0.username}:${container_registry_credentials.0.password}"
 containerd_registry_auth:
 %{ for registry_creds in container_registry_credentials ~}
   - registry: ${registry_creds.registry}
