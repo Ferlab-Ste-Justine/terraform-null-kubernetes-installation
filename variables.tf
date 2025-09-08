@@ -99,7 +99,7 @@ variable "k8_cluster_name" {
 variable "k8_version" {
   description = "Kubernetes version to install"
   type = string
-  default = "v1.31.4"
+  default = "1.32.8"
 }
 
 variable "custom_container_repos" {
@@ -173,13 +173,13 @@ variable "kubespray_repo" {
 variable "kubespray_repo_ref" {
   description = "Tag or branch to checkout once the repository is cloned"
   type        = string
-  default     = "v2.27.0"
+  default     = "v2.28.1"
 }
 
 variable "kubespray_image" {
   description = "Docker image of kubespray"
   type        = string
-  default     = "quay.io/kubespray/kubespray:v2.27.0"
+  default     = "quay.io/kubespray/kubespray:v2.28.1"
 }
 
 

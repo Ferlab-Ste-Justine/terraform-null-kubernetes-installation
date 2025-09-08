@@ -24,25 +24,34 @@
 # containerd_grpc_max_recv_message_size: 16777216
 # containerd_grpc_max_send_message_size: 16777216
 
+# Containerd debug socket location: unix or tcp format
+# containerd_debug_address: ""
+
+# Containerd log level
 # containerd_debug_level: "info"
+
+# Containerd logs format, supported values: text, json
+# containerd_debug_format: ""
+
+# Containerd debug socket UID
+# containerd_debug_uid: 0
+
+# Containerd debug socket GID
+# containerd_debug_gid: 0
 
 # containerd_metrics_address: ""
 
 # containerd_metrics_grpc_histogram: false
 
-## An obvious use case is allowing insecure-registry access to self hosted registries.
-## Can be ipaddress and domain_name.
-## example define mirror.registry.io or 172.19.16.11:5000
-## set "name": "url". insecure url must be started http://
-## Port number is also needed if the default HTTPS port is not used.
-# containerd_insecure_registries:
-#   "localhost": "http://127.0.0.1"
-#   "172.19.16.11:5000": "http://172.19.16.11:5000"
+# Registries defined within containerd.
+# containerd_registries_mirrors:
+#  - prefix: docker.io
+#    mirrors:
+#     - host: https://registry-1.docker.io
+#       capabilities: ["pull", "resolve"]
+#       skip_verify: false
 
-# containerd_registries:
-#   "docker.io": "https://registry-1.docker.io"
-
-# containerd_max_container_log_line_size: -1
+# containerd_max_container_log_line_size: 16384
 
 %{ if length(container_registry_credentials) > 0 ~}
 containerd_registry_auth:
