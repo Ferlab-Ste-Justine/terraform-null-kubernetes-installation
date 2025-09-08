@@ -28,7 +28,7 @@ The module takes the following input variables:
 - **k8_ingress_http_port**: Port on the kubernetes workers that will be used for ingress http traffic
 - **k8_ingress_https_port**: Port on the kubernetes workers that will be used for ingress https traffic
 - **k8_cluster_name**: Name of the kubernetes cluster. Mostly relevant if you want to reference multiple kubernetes clusters with the same configuration file. Defaullts to **cluster.local**
-- **k8_version**: Version of kubernetes to install. Defaults to **v1.25.6**.
+- **k8_version**: Version of kubernetes to install. Defaults to **1.32.8**.
 - **custom_container_repos**: Non-default container repos. Image names can be left with the empty string to go with the default.
   - **enabled**: If set to false (the default), no custom container repos will be used.
   - **registry**: Registry name with the namespace (or account).
@@ -39,8 +39,8 @@ The module takes the following input variables:
     - **nodelocaldns**: NodeLocal-DNSCache image name.
     - **pause**: Pause image name.
 - **kubespray_repo**: Repository to clone kubespray from. Defaults to the official repository.
-- **kubespray_repo_ref**: Tag or branch to use in the repo before running the kubespray playbooks. The default is the tag **v2.21.0** which is the tag the custom configuration of this repo is adapted to. You may not be successful if you use another tag/branch with different configuration expectations.
-- **kubespray_image**: Docker image to use for running the kubespray playbooks. The default is **ferlabcrsj/kubespray:2.21.0** which correlates with the value of **kubespray_repo_ref**.
+- **kubespray_repo_ref**: Tag or branch to use in the repo before running the kubespray playbooks. The default is the tag **v2.28.1** which is the tag the custom configuration of this repo is adapted to. You may not be successful if you use another tag/branch with different configuration expectations.
+- **kubespray_image**: Docker image to use for running the kubespray playbooks. The default is **quay.io/kubespray/kubespray:v2.28.1** which correlates with the value of **kubespray_repo_ref**.
 - **ingress_arguments**: Extra arguments to pass to ingress-nginx (ex: **--enable-ssl-passthrough**).
 - **ingress_version**: Allows you to override the nginx ingress version that kubespray installs by default, which is useful if, for example, you want to install the latest bugfix version without having to upgrade everything.
 - **container_registry_credentials**: Credentials to various container registries to pass to containerd. It should be an array of objects, each with the following keys:

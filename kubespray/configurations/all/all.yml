@@ -21,11 +21,6 @@ bin_dir: /usr/local/bin
 # valid options are "nginx" or "haproxy"
 # loadbalancer_apiserver_type: nginx  # valid values "nginx" or "haproxy"
 
-## If the cilium is going to be used in strict mode, we can use the
-## localhost connection and not use the external LB. If this parameter is
-## not specified, the first node to connect to kubeapi will be used.
-# use_localhost_as_kubeapi_loadbalancer: true
-
 ## Local loadbalancer should use this port
 ## And must be set port 6443
 loadbalancer_apiserver_port: 6443
@@ -47,21 +42,22 @@ loadbalancer_apiserver_healthcheck_port: 8081
 
 ## There are some changes specific to the cloud providers
 ## for instance we need to encapsulate packets with some network plugins
-## If set the possible values are either 'gce', 'aws', 'azure', 'openstack', 'vsphere', 'oci', or 'external'
-## When openstack is used make sure to source in the openstack credentials
-## like you would do when using openstack-client before starting the playbook.
+## If set the possible values only 'external' after K8s v1.31.
 # cloud_provider:
 
-## When cloud_provider is set to 'external', you can set the cloud controller to deploy
-## Supported cloud controllers are: 'openstack', 'vsphere' and 'hcloud'
-## When openstack or vsphere are used make sure to source in the required fields
+# External Cloud Controller Manager (Formerly known as cloud provider)
+# cloud_provider must be "external", otherwise this setting is invalid.
+# Supported external cloud controllers are: 'openstack', 'vsphere', 'oci', 'huaweicloud', 'hcloud' and 'manual'
+# 'manual' does not install the cloud controller manager used by Kubespray.
+# If you fill in a value other than the above, the check will fail.
 # external_cloud_provider:
 
-## Set these proxy values in order to update package manager and docker daemon to use proxies
+## Set these proxy values in order to update package manager and docker daemon to use proxies and custom CA for https_proxy if needed
 # http_proxy: ""
 # https_proxy: ""
+# https_proxy_cert_file: ""
 
-## Refer to roles/kubespray-defaults/defaults/main.yml before modifying no_proxy
+## Refer to roles/kubespray_defaults/defaults/main/main.yml before modifying no_proxy
 # no_proxy: ""
 
 ## Some problems may occur when downloading files over https proxy due to ansible bug
@@ -79,8 +75,8 @@ loadbalancer_apiserver_healthcheck_port: 8081
 # skip_http_proxy_on_os_packages: false
 
 ## Since workers are included in the no_proxy variable by default, docker engine will be restarted on all nodes (all
-## pods will restart) when adding or removing workers.  To override this behaviour by only including master nodes in the
-## no_proxy variable, set below to true:
+## pods will restart) when adding or removing workers.  To override this behaviour by only including control plane nodes
+## in the no_proxy variable, set below to true:
 no_proxy_exclude_workers: false
 
 ## Certificate Management
@@ -138,3 +134,6 @@ ntp_servers:
 
 ## Used to control no_log attribute
 unsafe_show_logs: false
+
+## If enabled it will allow kubespray to attempt setup even if the distribution is not supported. For unsupported distributions this can lead to unexpected failures in some cases.
+allow_unsupported_distribution_setup: false
