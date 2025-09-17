@@ -213,7 +213,7 @@ variable "ingress_version" {
   default = ""
 
   validation {
-    condition     = can(regex("^\\d+\\.\\d+\\.\\d+$", var.ingress_version))
+    condition     = var.ingress_version == "" || can(regex("^\\d+\\.\\d+\\.\\d+$", var.ingress_version))
     error_message = "ingress_version must be in semver format without a leading 'v' (example: '1.12.1')."
   }
 }
