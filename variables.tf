@@ -100,6 +100,11 @@ variable "k8_version" {
   description = "Kubernetes version to install"
   type = string
   default = "1.32.8"
+
+  validation {
+    condition     = can(regex("^\\d+\\.\\d+\\.\\d+$", var.k8_version))
+    error_message = "k8_version must be in semver format without a leading 'v' (example: '1.32.8')."
+  }
 }
 
 variable "custom_container_repos" {
@@ -170,18 +175,31 @@ variable "kubespray_repo" {
   default     = "https://github.com/kubernetes-sigs/kubespray.git"
 }
 
-variable "kubespray_repo_ref" {
-  description = "Tag or branch to checkout once the repository is cloned"
-  type        = string
-  default     = "v2.28.1"
-}
-
 variable "kubespray_image" {
   description = "Docker image of kubespray"
   type        = string
-  default     = "quay.io/kubespray/kubespray:v2.28.1"
+  default     = "quay.io/kubespray/kubespray"
 }
 
+variable "kubespray_tag" {
+  description = "Tag to use in the repo and image for running the kubespray playbooks"
+  type        = string
+  default     = "v2.28.1"
+
+  validation {
+    condition = (
+      can(regex("^v\\d+\\.\\d+\\.\\d+$", var.kubespray_tag)) ?
+      (
+        tonumber(regex("^v(\\d+)\\.\\d+\\.\\d+$", var.kubespray_tag)[0]) > 2 ||
+        (
+          tonumber(regex("^v(\\d+)\\.\\d+\\.\\d+$", var.kubespray_tag)[0]) == 2 &&
+          tonumber(regex("^v\\d+\\.(\\d+)\\.\\d+$", var.kubespray_tag)[0]) >= 28
+        )
+      ) : false
+    )
+    error_message = "kubespray_tag must be in semver format with a leading 'v' and at least 'v2.28.x'."
+  }
+}
 
 variable "ingress_arguments" {
   description = "List of arguments to pass to the nginx ingress. Hyphens should be included in the values."
@@ -193,6 +211,11 @@ variable "ingress_version" {
   description = "Version of the nginx ingress. Specify only if you wish to override the default version specified in kubespray"
   type = string
   default = ""
+
+  validation {
+    condition     = can(regex("^\\d+\\.\\d+\\.\\d+$", var.ingress_version))
+    error_message = "ingress_version must be in semver format without a leading 'v' (example: '1.12.1')."
+  }
 }
 
 variable "container_registry_credentials" {

@@ -47,7 +47,7 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
     inline = [
       "set -o errexit",
-      "sudo docker run --rm -t --mount type=bind,src=${var.cloud_init_sync_path},dst=${var.cloud_init_sync_path} --mount type=bind,src=/home/${var.bastion_user}/.ssh/id_rsa,dst=/home/${var.bastion_user}/.ssh/id_rsa -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_CONFIG=${var.cloud_init_sync_path}/ansible.cfg ${var.kubespray_image} ansible-playbook --timeout=300 --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.cloud_init_sync_path}/inventory --become --become-user=root ${var.cloud_init_sync_path}/sync.yml",
+      "sudo docker run --rm -t --mount type=bind,src=${var.cloud_init_sync_path},dst=${var.cloud_init_sync_path} --mount type=bind,src=/home/${var.bastion_user}/.ssh/id_rsa,dst=/home/${var.bastion_user}/.ssh/id_rsa -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_CONFIG=${var.cloud_init_sync_path}/ansible.cfg ${var.kubespray_image}:${var.kubespray_tag} ansible-playbook --timeout=300 --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.cloud_init_sync_path}/inventory --become --become-user=root ${var.cloud_init_sync_path}/sync.yml",
       #cleanup
       "sudo rm -r ${var.cloud_init_sync_path}"
     ]
@@ -113,7 +113,7 @@ resource "null_resource" "kubernetes_installation" {
   provisioner "remote-exec" {
     inline = [
       "set -o errexit",
-      var.ca_certificate != "" ? "sudo docker run --rm -t --mount type=bind,src=${var.certificates_path},dst=${var.certificates_path} --mount type=bind,src=/home/${var.bastion_user}/.ssh/id_rsa,dst=/home/${var.bastion_user}/.ssh/id_rsa -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_CONFIG=${var.certificates_path}/ansible.cfg ${var.kubespray_image} ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.certificates_path}/inventory --become --become-user=root ${var.certificates_path}/upload.yml" : ":",
+      var.ca_certificate != "" ? "sudo docker run --rm -t --mount type=bind,src=${var.certificates_path},dst=${var.certificates_path} --mount type=bind,src=/home/${var.bastion_user}/.ssh/id_rsa,dst=/home/${var.bastion_user}/.ssh/id_rsa -e ANSIBLE_HOST_KEY_CHECKING=False -e ANSIBLE_CONFIG=${var.certificates_path}/ansible.cfg ${var.kubespray_image}:${var.kubespray_tag} ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.certificates_path}/inventory --become --become-user=root ${var.certificates_path}/upload.yml" : ":",
       #cleanup
       "sudo rm -r ${var.certificates_path}"
     ]
@@ -125,7 +125,7 @@ resource "null_resource" "kubernetes_installation" {
         "set -o errexit",
         "if [ -d \"${var.provisioning_path}\" ]; then rm -Rf ${var.provisioning_path}; fi",
         "git clone ${var.kubespray_repo} ${var.provisioning_path}",
-        "cd ${var.provisioning_path} && git checkout ${var.kubespray_repo_ref}",
+        "cd ${var.provisioning_path} && git checkout ${var.kubespray_tag}",
         "cd ${var.provisioning_path} && cp -rfp inventory/sample inventory/deployment"
     ]
   }
@@ -233,7 +233,7 @@ resource "null_resource" "kubernetes_installation" {
           "set -o errexit",
           "if [ -d \"${var.artifacts_path}\" ]; then rm -Rf ${var.artifacts_path}; fi",
           "mkdir -p ${var.artifacts_path}",
-          "sudo docker run --rm -t --mount type=bind,src=${var.provisioning_path},dst=${var.provisioning_path} --mount type=bind,src=${var.artifacts_path},dst=${var.artifacts_path} --mount type=bind,src=/home/${var.bastion_user}/.ssh/id_rsa,dst=/home/${var.bastion_user}/.ssh/id_rsa -e ANSIBLE_HOST_KEY_CHECKING=False ${var.kubespray_image} ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.provisioning_path}/inventory/deployment/inventory --become --become-user=root ${var.provisioning_path}/cluster.yml",
+          "sudo docker run --rm -t --mount type=bind,src=${var.provisioning_path},dst=${var.provisioning_path} --mount type=bind,src=${var.artifacts_path},dst=${var.artifacts_path} --mount type=bind,src=/home/${var.bastion_user}/.ssh/id_rsa,dst=/home/${var.bastion_user}/.ssh/id_rsa -e ANSIBLE_HOST_KEY_CHECKING=False ${var.kubespray_image}:${var.kubespray_tag} ansible-playbook --private-key=/home/${var.bastion_user}/.ssh/id_rsa --user ${var.k8_cluster_user} --inventory ${var.provisioning_path}/inventory/deployment/inventory --become --become-user=root ${var.provisioning_path}/cluster.yml",
           "sudo chown -R $(id -u):$(id -g) ${var.artifacts_path}",
           #cleanup
           "sudo rm -r ${var.provisioning_path}"
