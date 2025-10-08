@@ -231,7 +231,16 @@ kubeadm_certificate_key: "{{ lookup('password', credentials_dir + '/kubeadm_cert
 k8s_image_pull_policy: IfNotPresent
 
 # audit log for kubernetes
-kubernetes_audit: false
+kubernetes_audit: ${audit.enabled}
+
+audit_log_path: "${audit.log_path}"
+audit_log_maxage: ${audit.log_maxage}
+audit_log_maxbackups: ${audit.log_maxbackups}
+audit_log_maxsize: ${audit.log_maxsize}
+
+kube_apiserver_extra_args:
+  audit-log-format: "json"
+  audit-policy-file: "${audit.audit_policy_file}"
 
 # define kubelet config dir for dynamic kubelet
 # kubelet_config_dir:

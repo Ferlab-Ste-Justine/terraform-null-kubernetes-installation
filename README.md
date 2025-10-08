@@ -52,6 +52,14 @@ The module takes the following input variables:
   - **mtu**: Mtu configuration for the virtual interfaces calico will manage. Defaults to **1480**. Can be set to 0 in which case calico will get the value from the host's interfaces.
   - **network_backend**: Calico network backend to use. Can be **bird**, **vxlan** or "none". Defaults to **bird**.
   - **encapsulation_mode**: Defines when to use network encapsulation with the chose network backend. Can be **Always**, **CrossSubnet** or **Never**. Defaults to **Always**.
+- **audit**: Parameters for Kubernetes API server audit logging.
+  - **enabled** *(optional bool, default: `true`)* — Enables audit logging.
+  - **log_path** *(optional string, default: `/var/log/kubernetes/audit/kube-apiserver-audit.log`)* — Path where audit logs will be written.
+  - **log_maxage** *(optional number, default: `7`)* — Days to retain old audit log files.
+  - **log_maxbackups** *(optional number, default: `10`)* — Number of rotated log files to keep.
+  - **log_maxsize** *(optional number, default: `100`)* — Max size in MB before rotation.
+  - **audit_policy_file** *(optional string, default: `/etc/kubernetes/audit-policy/apiserver-audit-policy.yaml`)* — Path to the audit policy file copied by the `kubernetes-node` module.
+
 
 ## User Provided Certificates Variables
 

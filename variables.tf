@@ -246,3 +246,23 @@ variable "calico" {
     encapsulation_mode = "Always"
   }
 }
+
+variable "audit" {
+  description = "Parameters for kubernetes audits"
+  type = object({
+    enabled           = optional(bool,   true)
+    log_path          = optional(string, "/var/log/kubernetes/audit/kube-apiserver-audit.log")
+    log_maxage        = optional(number, 7)
+    log_maxbackups    = optional(number, 10)
+    log_maxsize       = optional(number, 100)
+    audit_policy_file = optional(string, "/etc/kubernetes/audit-policy/apiserver-audit-policy.yaml")
+  })
+  default = {
+    enabled           = true
+    log_path          = "/var/log/kubernetes/audit/kube-apiserver-audit.log"
+    log_maxage        = 7
+    log_maxbackups    = 10
+    log_maxsize       = 100
+    audit_policy_file = "/etc/kubernetes/audit-policy/apiserver-audit-policy.yaml"
+  }
+}

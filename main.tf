@@ -197,6 +197,7 @@ resource "null_resource" "kubernetes_installation" {
         artifacts_dir = var.artifacts_path
         load_balancer_ips = var.load_balancer_ips
         kubernetes_version = var.k8_version
+        audit              = var.audit 
       }
     )
     destination = "${var.provisioning_path}/inventory/deployment/group_vars/k8s_cluster/k8s-cluster.yml"
