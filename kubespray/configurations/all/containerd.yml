@@ -53,11 +53,8 @@
 
 # containerd_max_container_log_line_size: 16384
 
-%{ if length(container_registry_credentials) > 0 ~}
-containerd_registry_auth:
-%{ for registry_creds in container_registry_credentials ~}
-  - registry: ${registry_creds.registry}
-    username: ${registry_creds.username}
-    password: ${registry_creds.password}
-%{ endfor ~}
-%{ endif ~}
+# NOTE: this setting is now useless with containerd 2.x which is used since kubespray 2.28 (https://github.com/kubernetes-sigs/kubespray/issues/12296)
+# containerd_registry_auth:
+#   - registry: 10.0.0.2:5000
+#     username: user
+#     password: pass

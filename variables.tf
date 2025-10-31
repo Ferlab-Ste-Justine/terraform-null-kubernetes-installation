@@ -218,16 +218,6 @@ variable "ingress_version" {
   }
 }
 
-variable "container_registry_credentials" {
-  description = "Credentials to dependent container registries"
-  type = list(object({
-    registry = string
-    username = string
-    password = string
-  }))
-  default = []
-}
-
 variable "calico" {
   description = "Some configurable parameters for Calico"
   type = object({
