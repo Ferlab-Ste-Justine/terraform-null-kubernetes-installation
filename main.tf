@@ -7,6 +7,11 @@ resource "null_resource" "kubernetes_installation" {
     version = var.revision
   }
 
+  #Temporary hack to prevent deleted worker from messing up installation
+  lifecycle {
+    ignore_changes = [triggers["worker_ips"]]
+  }
+
   connection {
     host        = var.bastion_external_ip
     type        = "ssh"
